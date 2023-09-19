@@ -21,6 +21,7 @@ const Index = forwardRef((props, ref) => {
     secureTextEntry,
     keyboardType,
     multiline,
+    editable,
     textAlignVertical,
     icon,
     onSubmitEditing,
@@ -58,6 +59,7 @@ const Index = forwardRef((props, ref) => {
           placeholderTextColor={success ? BaseColor.grayColor : colors.primary}
           secureTextEntry={secureTextEntry}
           value={value}
+          editable={editable}
           selectionColor={colors.primary}
           keyboardType={keyboardType}
           multiline={multiline}
@@ -82,6 +84,7 @@ Index.propTypes = {
   secureTextEntry: PropTypes.bool,
   keyboardType: PropTypes.string,
   multiline: PropTypes.bool,
+  editable: PropTypes.bool,
   textAlignVertical: PropTypes.string,
   icon: PropTypes.node,
   onSubmitEditing: PropTypes.func,
@@ -101,6 +104,7 @@ Index.defaultProps = {
   secureTextEntry: false,
   keyboardType: 'default',
   multiline: false,
+  editable: true,
   textAlignVertical: 'center',
   icon: null,
   onSubmitEditing: () => {}

@@ -1,4 +1,4 @@
-import * as actionTypes from '../actions/actionTypes';
+import * as actionTypes from '../actions/authActionTypes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const user = AsyncStorage.getItem('user');
 const initialState = user ? { isLoggedIn: true, user: user } : { isLoggedIn: false, user: null };

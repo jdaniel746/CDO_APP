@@ -1,4 +1,4 @@
-import * as actionTypes from '@actions/actionTypes';
+import * as actionTypes from '@actions/application';
 const initialState = {
   theme: null,
   font: null,
