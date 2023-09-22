@@ -2,31 +2,41 @@ import { PieChart, Project02, SafeAreaView, TabTag } from '@components';
 import { BaseColor, BaseStyle, useTheme } from '@config';
 import { PProjectHome } from '@data';
 import * as Utils from '@utils';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, View } from 'react-native';
 import styles from './styles';
+import { GroupsActions } from '@actions';
+import { useDispatch, useSelector } from 'react-redux';
+
+const { retrieveGroupsByRed } = GroupsActions;
 
 const PHome = (props) => {
   const { navigation } = props;
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const dispatch = useDispatch();
+  const grupos = useSelector((state) => state.groups);
+
+  useEffect(() => {
+    console.log('Grupos: ' + JSON.stringify(grupos));
+  }, [grupos]);
   const tabs = [
     {
       id: 'all',
-      title: t('all_project')
+      title: t('all')
     },
     {
       id: 'on_going',
-      title: t('on_going')
+      title: '4.1'
     },
     {
       id: 'completed',
-      title: t('completed')
+      title: '4.2'
     },
     {
       id: 'on_hold',
-      title: t('on_hold')
+      title: '4.3'
     }
   ];
   const [tab, setTab] = useState(tabs[0]);
@@ -61,7 +71,12 @@ const PHome = (props) => {
   }, [tab]);
 
   const goProjectDetail = (item) => () => {
-    navigation.navigate('PProjectView', { item: item });
+    dispatch(
+      retrieveGroupsByRed('jovenes', (response) => {
+        console.log('response G ');
+      })
+    );
+    //navigation.navigate('PProjectView', { item: item });
   };
 
   const renderContent = () => {

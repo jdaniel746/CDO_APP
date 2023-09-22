@@ -330,7 +330,7 @@
 	"resolved": "Resolved",
 	"improve": "Improve",
 	"task_view": "Task View",
-	"all_project": "All Project",
+	"all": "Todos",
 	"error.email.required": "Debe ingresar un correo electronico",
 	"error.email.invalid": "Ingrese un correo valido",
 	"error.password.required": "Debe ingresar una contrasena",

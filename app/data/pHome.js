@@ -2,7 +2,7 @@ import { Images, BaseColor } from '@config';
 export const PProjectHome = [
   {
     id: 1,
-    title: 'React Native UI KIT V1.0',
+    title: 'Grupo 4.1',
     description: 'Proin eget tortor risus. Donec sollicitudin molestie malesuada',
     days: '150 days left',
     progress: 60,
@@ -42,7 +42,7 @@ export const PProjectHome = [
   },
   {
     id: 2,
-    title: 'Vehicle Management System',
+    title: 'Grupo 4.2',
     description: 'Proin eget tortor risus. Donec sollicitudin molestie malesuada',
     days: '30 days left',
     progress: 80,
@@ -88,7 +88,7 @@ export const PProjectHome = [
   },
   {
     id: 3,
-    title: 'New Admin Boostrap 3',
+    title: 'Grupo 4.3',
     description: 'Proin eget tortor risus. Donec sollicitudin molestie malesuada',
     days: '10 days left',
     progress: 90,
