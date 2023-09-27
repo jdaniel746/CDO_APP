@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, forwardRef } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import PropTypes from 'prop-types';
 import { Text, Icon } from '@components';
 import styles from './styles';
 import { Calendar } from 'react-native-calendars';

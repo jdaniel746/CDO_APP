@@ -163,8 +163,11 @@ const Navigator = () => {
           screenOptions={{
             headerShown: false
           }}>
-          <MainStack.Screen key="Main" name="Main" component={MainScreens} />
-          <MainStack.Screen key="Auth" name="Auth" component={AuthScreens} />
+          {state.auth.user ? (
+            <MainStack.Screen key="Main" name="Main" component={MainScreens} />
+          ) : (
+            <MainStack.Screen key="Auth" name="Auth" component={AuthScreens} />
+          )}
         </MainStack.Navigator>
       </NavigationContainer>
     </View>

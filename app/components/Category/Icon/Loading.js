@@ -1,7 +1,7 @@
-import React from "react";
-import { View } from "react-native";
-import { PlaceholderLine, Placeholder } from "@components";
-import styles from "./styles";
+import React from 'react';
+import { View } from 'react-native';
+import { PlaceholderLine, Placeholder } from '@components';
+import styles from './styles';
 
 const Loading = (props) => {
   const { style } = props;

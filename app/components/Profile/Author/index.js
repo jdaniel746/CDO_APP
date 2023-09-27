@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import styles from './styles';
-import Loading from './Loading';
+//import Loading from './Loading';
 export default function ProfileAuthor(props) {
   const {
     style,
@@ -21,9 +21,9 @@ export default function ProfileAuthor(props) {
     loading
   } = props;
 
-  if (loading) {
+  /*  if (loading) {
     return <Loading style={style} styleLeft styleThumb styleRight />;
-  }
+  }*/
 
   return (
     <TouchableOpacity style={[styles.contain, style]} onPress={onPress} activeOpacity={0.9}>

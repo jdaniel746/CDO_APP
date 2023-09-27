@@ -128,7 +128,7 @@ export { default as ModalFilter } from './ModalFilter';
 // export { default as Avatars } from './Avatars';
 // export { default as ActionButton } from './ActionButton';
 // export { default as RangeSlider } from './RangeSlider';
-// export { PlaceholderLine, Placeholder } from './Placeholder';
+export { PlaceholderLine, Placeholder } from './Placeholder';
 // export { default as ModalOption } from './ModalOption';
 // // Label
 // export { default as LabelUpper2Row } from './Label/Upper2Row';

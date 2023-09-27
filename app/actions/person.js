@@ -31,12 +31,15 @@ export const updatePerson = (person, callback) => async (dispatch) => {
 
 export const fetchPerson = (uid, callback) => async (dispatch) => {
   try {
+    console.log("uid:"+uid)
     const docRef = doc(firestore, 'persona', uid);
     onSnapshot(docRef, (querySnapshot) => {
       const data = querySnapshot.data();
       dispatch(onFetchSuccess(data));
       if (typeof callback === 'function') {
-        AsyncStorage.setItem('person', JSON.stringify(data));
+        if (data) {
+          AsyncStorage.setItem('person', JSON.stringify(data));
+        }
         callback({ success: true });
       }
     });

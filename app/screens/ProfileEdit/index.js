@@ -1,7 +1,7 @@
 import { Button, Header, Icon, Image, SafeAreaView, Text, TextInput, CardList } from '@components';
 import { BaseColor, BaseStyle, useTheme, Images } from '@config';
 // Load sample data
-import { UserData } from '@data';
+import Spinner from 'react-native-loading-spinner-overlay';
 import React, { useEffect, useState } from 'react';
 import { Platform, ScrollView, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
@@ -20,7 +20,7 @@ import Toast from 'react-native-toast-message';
 const { fetchPerson, updatePerson } = PersonActions;
 //const minDate = dayjs().add(2, 'day').format('YYYY-MM-DD');
 const profileValidationSchema = yup.object().shape({
-  identify: yup.string().min(8, 'error.identify.min').max(9, 'error.identify.max'),
+  identify: yup.string().min(7, 'error.identify.min').max(8, 'error.identify.max'),
   firstname: yup
     .string()
     .required('error.firstname.required')
@@ -47,10 +47,10 @@ const ProfileEdit = (props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [avatar, setAvatar] = useState(person.photo);
-  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [birthdate, setBirthdate] = useState();
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
@@ -66,28 +66,32 @@ const ProfileEdit = (props) => {
   };
 
   useEffect(() => {
+    console.log("PERSON:"+JSON.stringify(person))
     if (!person.person) {
       try {
+        setIsLoading(true);
         dispatch(
           fetchPerson(user.id, (response) => {
             console.log('response:' + JSON.stringify(response));
+            setIsLoading(false);
           })
         );
       } catch (e) {
+        setIsLoading(false);
         console.log('ERROR PERSONA :' + e);
       }
     }
   }, []);
 
   const handlerUpdate = (form) => {
-    setLoading(true);
+    setIsLoading(true);
     form.id = user.id;
     form.photo = avatar;
     console.log(form)
     dispatch(
       updatePerson(form, (response) => {
         console.log('responseU:' + JSON.stringify(response));
-        setLoading(false);
+        setIsLoading(false);
         if (response.success) {
           Toast.show({
             type: 'success',
@@ -159,6 +163,7 @@ const ProfileEdit = (props) => {
 
   return (
     <>
+      <Spinner visible={isLoading} />
       {person.person && (
         <Formik
           initialValues={{
@@ -335,7 +340,7 @@ const ProfileEdit = (props) => {
                   />
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
-                      {t('input_birthdate')}
+                      {t('input_phone')}
                     </Text>
                   </View>
                   <View style={{ flexDirection: 'row', marginTop: 10 }}>
@@ -365,7 +370,7 @@ const ProfileEdit = (props) => {
                 </View>
               </ScrollView>
               <View style={{ padding: 20 }}>
-                <Button loading={loading} full onPress={handleSubmit}>
+                <Button full onPress={handleSubmit}>
                   {t('confirm')}
                 </Button>
               </View>
