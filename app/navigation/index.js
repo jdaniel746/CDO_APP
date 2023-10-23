@@ -27,11 +27,22 @@ import ChangeLanguage from '../screens/ChangeLanguage';
 import ResetPassword from '../screens/ResetPassword';
 import SelectDarkOption from '../screens/SelectDarkOption';
 import SelectFontOption from '../screens/SelectFontOption';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 const SettingsStack = createStackNavigator();
 const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
+
+const MyDrawer = () => {
+  return (
+    <Drawer.Navigator>
+      <Drawer.Screen name="Feed" component={Setting} />
+      <Drawer.Screen name="Article" component={Profile} />
+    </Drawer.Navigator>
+  );
+};
 
 const AuthScreens = () => {
   const intro = useSelector(getInto);
@@ -159,12 +170,15 @@ const Navigator = () => {
     <View style={{ flex: 1, position: 'relative' }}>
       <NavigationContainer theme={theme} ref={navigationRef}>
         <MainStack.Navigator
-          initialRouteName={state.auth.user ? 'Home' : 'Auth'}
+          initialRouteName={state.auth.user ? 'Main' : 'Auth'}
           screenOptions={{
             headerShown: false
           }}>
           {state.auth.user ? (
-            <MainStack.Screen key="Main" name="Main" component={MainScreens} />
+            <>
+              <MainStack.Screen key="Main" name="Main" component={MainScreens} />
+              <MainStack.Screen name="Root" component={MyDrawer} />
+            </>
           ) : (
             <MainStack.Screen key="Auth" name="Auth" component={AuthScreens} />
           )}
