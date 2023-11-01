@@ -53,7 +53,6 @@ export const login = (login, callback) => async (dispatch) => {
 
       dispatch(onLoginSuccess(data));
       if (typeof callback === 'function') {
-        console.log("SETTING CALLBACK TRUE")
         AsyncStorage.setItem('user', JSON.stringify(data.user));
         callback({ success: true });
       }
@@ -66,15 +65,13 @@ export const login = (login, callback) => async (dispatch) => {
 
 export const register = (user, callback) => async (dispatch) => {
   try {
-    console.log("values:"+JSON.stringify(user))
     const response = await createUserWithEmailAndPassword(auth, user.email, user.password);
-    console.log("response "+response)
     const { uid } = response.user;
     const user_ = {
       id: uid,
       email: user.email,
       fullName: user.firstname + ' ' + user.lastname,
-      avatar: '',
+      avatar: 'https://firebasestorage.googleapis.com/v0/b/cdo-app-39c97.appspot.com/o/avatar%2FbmDbb48uYjVP1ilcKk7vYj0Fsmw1%2Fuser.png?alt=media&token=fe38c769-fbc9-4eff-bc73-b48c06271332&_gl=1*1gkku91*_ga*MTA5OTc3Mjg0NC4xNjUzNjAwMzU4*_ga_CW55HF8NVT*MTY5ODg3Njk0OS44Ny4xLjE2OTg4Nzc3NTUuNTIuMC4w',
       personId: uid
     };
     const person_ = {

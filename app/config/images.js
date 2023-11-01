@@ -14,6 +14,7 @@ export const Images = {
   // eProduct: require("@assets/images/e-product.png"),
   // mazi: require("@assets/images/mazi.png"),
   // logo: require("@assets/images/logo.png"),
+  userIcon: require('@assets/images/user.png'),
   avata1: require('@assets/images/avata-01.jpeg'),
   avata2: require('@assets/images/avata-02.jpeg'),
   avata3: require('@assets/images/avata-03.jpeg'),

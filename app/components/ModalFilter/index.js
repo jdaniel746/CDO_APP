@@ -28,7 +28,7 @@ const ModalFilter = (props) => {
               styles.contentActionModalBottom,
               {
                 borderBottomColor: colors.border,
-                borderBottomWidth: index == options.length - 1 ? 0 : StyleSheet.hairlineWidth,
+                borderBottomWidth: index == options.length - 1 ? 0 : StyleSheet.hairlineWidth
               }
             ]}
             key={item.value}

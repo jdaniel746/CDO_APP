@@ -35,12 +35,17 @@ export const fetchPerson = (uid, callback) => async (dispatch) => {
     const docRef = doc(firestore, 'persona', uid);
     onSnapshot(docRef, (querySnapshot) => {
       const data = querySnapshot.data();
-      dispatch(onFetchSuccess(data));
+      console.log("PERSONA SUCC:" + JSON.stringify(data))
+
       if (typeof callback === 'function') {
         if (data) {
           AsyncStorage.setItem('person', JSON.stringify(data));
+          dispatch(onFetchSuccess(data));
+          callback({ success: true });
+        }else {
+          callback({ success: false, message: 'Error consultando persona' });
         }
-        callback({ success: true });
+
       }
     });
   } catch (e) {

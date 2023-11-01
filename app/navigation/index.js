@@ -22,14 +22,17 @@ import Setting from '@screens/Setting';
 import ProfileEdit from '@screens/ProfileEdit';
 import SignUp from '../screens/SignUp';
 import SignIn from '../screens/SignIn';
+import AssistanceGroup from '../screens/AssistanceGroup';
 import ThemeSetting from '../screens/ThemeSetting';
 import ChangeLanguage from '../screens/ChangeLanguage';
 import ResetPassword from '../screens/ResetPassword';
 import SelectDarkOption from '../screens/SelectDarkOption';
 import SelectFontOption from '../screens/SelectFontOption';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import PSelectAssignee from '../screens/PSelectAssignee';
 
 const SettingsStack = createStackNavigator();
+const AssistanceStack = createStackNavigator();
 const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -55,6 +58,19 @@ const AuthScreens = () => {
       <MainStack.Screen key="SingUp" name="SignUp" component={SignUp} />
       <MainStack.Screen key="ResetPassword" name="ResetPassword" component={ResetPassword} />
     </AuthStack.Navigator>
+  );
+};
+
+const Assistance = () => {
+  return (
+    <AssistanceStack.Navigator
+      initialRouteName={'Assistance'}
+      screenOptions={{
+        headerShown: false
+      }}>
+      <SettingsStack.Screen key="Assistance" name="Assistance" component={AssistanceGroup} />
+      <SettingsStack.Screen key="PeopleSelect" name="PeopleSelect" component={PSelectAssignee} />
+    </AssistanceStack.Navigator>
   );
 };
 
@@ -101,7 +117,7 @@ const MainScreens = () => {
         style: BaseStyle.tabBar,
         labelStyle: {
           fontSize: 12
-        },
+        }
       }}>
       <BottomTab.Screen
         key="Home"
@@ -110,6 +126,15 @@ const MainScreens = () => {
         options={{
           tabBarIcon: ({ color }) => tabBarIcon({ color, name: 'home' }),
           title: t('Home')
+        }}
+      />
+      <BottomTab.Screen
+        key="AssistanceGroup"
+        name="AssistanceGroup"
+        component={Assistance}
+        options={{
+          tabBarIcon: ({ color }) => tabBarIcon({ color, name: 'clipboard-check' }),
+          title: t('Asistencia')
         }}
       />
       <BottomTab.Screen
@@ -165,7 +190,7 @@ const Navigator = () => {
     return null;
   }
   console.log('STATE:' + JSON.stringify(state.auth.user));
-  console.log('PROCESS' + process.env.API_KEY);
+  console.log('PROCESS' + process.env);
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       <NavigationContainer theme={theme} ref={navigationRef}>

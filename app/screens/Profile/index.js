@@ -27,10 +27,11 @@ const Profile = (props) => {
   const [userData] = useState(UserData[0]);
   const auth = useSelector((state) => state.auth);
   const user = auth.user;
+  console.log('user ON PROF ' + JSON.stringify(user));
   /**
    * @description Simple logout with Redux
-   * @author Passion UI <passionui.com>
-   * @date 2019-09-01
+   * @author Jose Alvarado
+   * @date 2023-06-01
    */
   const onLogOut = () => {
     setLoading(true);

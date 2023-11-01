@@ -8,6 +8,9 @@ import {
 } from 'react-native';
 import { reloadAsync } from 'expo-updates';
 import { TRANSPARENCIES } from './transparencies';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
+import {getDownloadURL, ref, uploadBytesResumable} from 'firebase/storage';
 
 const scaleValue = PixelRatio.get() / 2;
 

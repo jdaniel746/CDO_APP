@@ -38,7 +38,7 @@ const SignIn = (props) => {
           if (response.success) {
             navigation.navigate('Main');
           } else {
-            console.log('error'+JSON.stringify(response))
+            console.log('error' + JSON.stringify(response));
             setLoading(false);
           }
         })

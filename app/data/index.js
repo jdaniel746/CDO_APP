@@ -46,7 +46,7 @@ export {
   FMarkers,
   FCurrencies
 } from './fAddTransaction';
-// export { FFriends } from './fFriend';
+export { FFriends } from './fFriend';
 // export { FPaymentItemsData } from './fBank';
 // export { FHistory } from './fHistory';
 // export { FPayment, FPeriod } from './fActivityFilter';
@@ -55,7 +55,7 @@ export {
 // export { FCategoryData } from './fCategory';
 export { PProjectHome } from './pHome';
 // export { PProject, PProjectType, PProjectAction } from './pProject';
-// export { PTeamMembersInCreate, PAttachments } from './pProjectCreate';
+export { PTeamMembersInCreate, PAttachments, GroupLeaders } from './pProjectCreate';
 // export { PTaskStatus, PTaskType, PTaskPriority } from './pTaskCreate';
 // export { PTasks } from './pTask';
 // export { PAttachmentsInTaskView } from './pTaskView';

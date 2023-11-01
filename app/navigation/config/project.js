@@ -19,7 +19,7 @@ import PFilter from '@screens/PFilter';*/
 import Profile from '@screens/Profile';
 // import Category from '@screens/Category';
 // import Favourite from '@screens/Favourite';
-// import PSelectAssignee from '@screens/PSelectAssignee';
+import PSelectAssignee from '@screens/PSelectAssignee';
 import { tabBarIcon, tabBarIconHaveNoty, BottomTabNavigatorMazi } from '@navigation/components';
 
 export const NewsTabScreens = {
@@ -62,12 +62,12 @@ export default {
       title: 'home'
     }
   },
-  // PSelectAssignee: {
-  //   component: PSelectAssignee,
-  //   options: {
-  //     title: 'select_assignee',
-  //   }
-  // },
+  PSelectAssignee: {
+    component: PSelectAssignee,
+    options: {
+      title: 'select_assignee'
+    }
+  }
   // PProjectView: {
   //   component: PProjectView,
   //   options: {

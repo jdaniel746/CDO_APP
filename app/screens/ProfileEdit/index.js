@@ -17,6 +17,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { storage } from '@config/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import Toast from 'react-native-toast-message';
+import UserIcon from '../../assets/images/user.png'
 const { fetchPerson, updatePerson } = PersonActions;
 //const minDate = dayjs().add(2, 'day').format('YYYY-MM-DD');
 const profileValidationSchema = yup.object().shape({
@@ -36,7 +37,7 @@ const profileValidationSchema = yup.object().shape({
   address: yup.string().min(10, 'error.address.min').max(100, 'error.address.max'),
   birthdate: yup.date(),
   phone: yup.number().test('len', 'error.phone.length', (val) => val.toString().length === 7),
-  code: yup.number().test('len', 'error.code.length', (val) => val.toString().length === 4)
+  code: yup.number().test('len', 'error.code.length', (val) => val.toString().length === 3)
 });
 
 const ProfileEdit = (props) => {
@@ -46,12 +47,13 @@ const ProfileEdit = (props) => {
   const person = useSelector((state) => state.person);
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const [avatar, setAvatar] = useState(person.photo);
+  const [avatar, setAvatar] = useState(person.photo ?? user.avatar);
   const dispatch = useDispatch();
   const [birthdate, setBirthdate] = useState();
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log(JSON.stringify(user) + "PERSONA EN EDITARv:" + JSON.stringify(person))
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
   };
@@ -66,7 +68,7 @@ const ProfileEdit = (props) => {
   };
 
   useEffect(() => {
-    console.log("PERSON:"+JSON.stringify(person))
+    console.log("USEEFFECT PERSON:"+JSON.stringify(person))
     if (!person.person) {
       try {
         setIsLoading(true);
@@ -74,6 +76,13 @@ const ProfileEdit = (props) => {
           fetchPerson(user.id, (response) => {
             console.log('response:' + JSON.stringify(response));
             setIsLoading(false);
+            if(!response.success){
+              Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: response.message
+              });
+            }
           })
         );
       } catch (e) {
@@ -114,7 +123,7 @@ const ProfileEdit = (props) => {
       if (Platform.OS === 'ios') {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
-          alert('Permission is required for use.');
+          alert('Permission is required for use .');
           return;
         }
       }
@@ -164,7 +173,7 @@ const ProfileEdit = (props) => {
   return (
     <>
       <Spinner visible={isLoading} />
-      {person.person && (
+      {user && (
         <Formik
           initialValues={{
             identify: person.person?.identify,
@@ -206,7 +215,7 @@ const ProfileEdit = (props) => {
                   {/*<View><Image source={image} style={styles.thumb} /></View>*/}
                   <CardList
                     style={{}}
-                    image={avatar ? { uri: avatar } : { uri: person.person.photo }}
+                    image={avatar ? { uri: avatar } : person.person ? { uri:  person.person.photo } : Images.userIcon}
                     title="Pastor(a)"
                     subtitle="Description news"
                     rate={4.5}
@@ -244,7 +253,7 @@ const ProfileEdit = (props) => {
                     autoCorrect={false}
                     placeholder={t('input_firstname')}
                     placeholderTextColor={BaseColor.grayColor}
-                    value={person.person?.firstname}
+                    value={values.firstname}
                     selectionColor={colors.primary}
                   />
                   <View style={styles.contentTitle}>
