@@ -29,15 +29,15 @@ const Profile = (props) => {
   const user = auth.user;
   /**
    * @description Simple logout with Redux
-   * @author Passion UI <passionui.com>
-   * @date 2019-09-01
+   * @author Jose Alvarado
+   * @date 2023-06-01
    */
   const onLogOut = () => {
     setLoading(true);
     dispatch(
       logout((response) => {
         setLoading(false);
-        navigation.navigate('Auth');
+        //navigation.navigate('Auth');
       })
     );
   };

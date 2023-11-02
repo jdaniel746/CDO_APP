@@ -26,7 +26,7 @@ export const BottomTabNavigatorMazi = ({ tabScreens = {} }) => {
       }}>
       {Object.keys(tabScreens).map((name, index) => {
         const { options, component } = tabScreens[name];
-        console.log(JSON.stringify(options)+" "+name)
+        console.log(JSON.stringify(options) + ' ' + name);
         return (
           <BottomTab.Screen
             key={index}

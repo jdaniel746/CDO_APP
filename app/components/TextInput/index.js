@@ -1,9 +1,28 @@
 import { BaseColor, BaseStyle, useFont, useTheme } from '@config';
 import PropTypes from 'prop-types';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { I18nManager, TextInput, View } from 'react-native';
 import { Text } from '@components';
 import { useTranslation } from 'react-i18next';
+
+const { format: formatCurrency } = Intl.NumberFormat('pt-BR', {
+  currency: 'BRL',
+  style: 'currency'
+});
+
+function useATMInput() {
+  const [value, setValue] = useState('');
+  function handleChange(value) {
+    try{
+      const decimal = Number(value.replace(/\D/g, '')) / 100;
+      setValue(formatCurrency(decimal || 0).replace('R$\xa0', ''));
+    } catch (e) {
+      console.log(e)
+    }
+
+  }
+  return [value, handleChange];
+}
 
 const Index = forwardRef((props, ref) => {
   const font = useFont();
@@ -18,6 +37,7 @@ const Index = forwardRef((props, ref) => {
     placeholder,
     value,
     success,
+    currency,
     secureTextEntry,
     keyboardType,
     multiline,
@@ -29,6 +49,14 @@ const Index = forwardRef((props, ref) => {
     ...attrs
   } = props;
   const { t } = useTranslation();
+  const [values, setValues] = useATMInput();
+
+  useEffect(() => {
+    if(currency){
+      onChangeText(values);
+    }
+  }, [values]);
+
   return (
     <>
       <View
@@ -52,13 +80,13 @@ const Index = forwardRef((props, ref) => {
             },
             inputStyle
           ]}
-          onChangeText={onChangeText}
+          onChangeText={currency ? setValues : onChangeText}
           onBlur={onBlur}
           autoCorrect={false}
           placeholder={placeholder}
           placeholderTextColor={success ? BaseColor.grayColor : colors.primary}
           secureTextEntry={secureTextEntry}
-          value={value}
+          value={currency ? values : value}
           editable={editable}
           selectionColor={colors.primary}
           keyboardType={keyboardType}
@@ -85,6 +113,7 @@ Index.propTypes = {
   keyboardType: PropTypes.string,
   multiline: PropTypes.bool,
   editable: PropTypes.bool,
+  currency: PropTypes.bool,
   textAlignVertical: PropTypes.string,
   icon: PropTypes.node,
   onSubmitEditing: PropTypes.func,
@@ -107,6 +136,7 @@ Index.defaultProps = {
   editable: true,
   textAlignVertical: 'center',
   icon: null,
+  currency: false,
   onSubmitEditing: () => {}
 };
 

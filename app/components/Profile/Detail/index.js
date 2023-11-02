@@ -31,7 +31,7 @@ export default function ProfileDetail(props) {
           {image ? (
             <Image source={{ uri: image }} style={[styles.thumb, styleThumb]} />
           ) : (
-            <Image source={Images.profile2} style={[styles.thumb, styleThumb]} />
+            <Image source={Images.userIcon} style={[styles.thumb, styleThumb]} />
           )}
           <View style={[styles.point, { backgroundColor: colors.primaryLight }]}>
             <Text overline whiteColor semibold>

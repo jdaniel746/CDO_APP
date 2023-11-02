@@ -5,7 +5,7 @@ const initialState = {
   force_dark: null,
   language: null,
   menu: 'eCommerce',
-  intro: true,
+  intro: true
 };
 
 export default (state = initialState, action = {}) => {
@@ -13,32 +13,32 @@ export default (state = initialState, action = {}) => {
     case actionTypes.CHANGE_THEME:
       return {
         ...state,
-        theme: action.theme,
+        theme: action.theme
       };
     case actionTypes.CHANGE_FONT:
       return {
         ...state,
-        font: action.font,
+        font: action.font
       };
     case actionTypes.FORCE_APPEARANCE:
       return {
         ...state,
-        force_dark: action.force_dark,
+        force_dark: action.force_dark
       };
     case actionTypes.CHANGE_LANGUAGE:
       return {
         ...state,
-        language: action.language,
+        language: action.language
       };
     case actionTypes.SET_MENU:
       return {
         ...state,
-        menu: action.menu,
+        menu: action.menu
       };
     case actionTypes.SET_INTRO:
       return {
         ...state,
-        intro: action.intro,
+        intro: action.intro
       };
     default:
       return state;

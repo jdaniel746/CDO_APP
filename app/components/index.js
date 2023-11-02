@@ -66,7 +66,9 @@ export { default as ProfileGrid } from './Profile/Grid';
 // export { default as ProductOrderItemList } from './Product/OrderItemList';
 // export { default as ProductPaymentBankItem } from './Product/PaymentBankItem';
 // export { default as ProductSize } from './Product/Size';
-// export { default as ProductSpecGrid } from './Product/SpecGrid';
+export { default as ProductSpecGrid } from './SpecGrid';
+export { default as SelectModal } from './SelectModal';
+export { default as Upload } from './Upload';
 // export { default as ProductCategory1 } from './Product/Category1';
 // export { default as ProductCategory2 } from './Product/Category2';
 // export { default as ProductCategory3 } from './Product/Category3';
@@ -81,7 +83,7 @@ export { default as ProfileGrid } from './Profile/Grid';
 // // List components
 // export { default as ListThumbSquare } from './List/ThumbSquare';
 // export { default as ListThumbCircle } from './List/ThumbCircle';
-// export { default as ListTextButton } from './List/TextButton';
+export { default as ListTextButton } from './List/TextButton';
 // export { default as ListTransaction } from './List/Transaction';
 // export { default as ListTransactionExpand } from './List/TransactionExpand';
 // export { default as ListTextLR } from './List/TextLR';
@@ -171,6 +173,6 @@ export { default as TextInputMoney } from './TextInput/Money';
 // export { default as Project01 } from './Project/01';
 export { default as Project02 } from './Project/02';
 // export { default as PSelectOption } from './PSelectOption';
-// export { default as PButtonAddUser } from './PButtonAddUser';
+export { default as PButtonAddUser } from './PButtonAddUser';
 // // Ticket
 // export { default as Ticket } from './Ticket';

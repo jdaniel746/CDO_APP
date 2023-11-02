@@ -2,7 +2,7 @@ import Image from '@components/Image';
 import StarRating from '@components/StarRating';
 import Tag from '@components/Tag';
 import Text from '@components/Text';
-import { BaseColor } from '@config';
+import { BaseColor, Images } from '@config';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
@@ -12,7 +12,7 @@ const CardList = (props) => {
   const { style, image, title, subtitle, rate, onPress, onPressTag } = props;
   return (
     <TouchableOpacity style={[styles.contain, style]} onPress={onPress} activeOpacity={0.9}>
-      <Image source={image} style={styles.image} />
+      <Image source={image.uri === '' ? Images.uploadPhoto : image} style={styles.image} />
       <View style={{ paddingHorizontal: 10 }}>
         <Text headline semibold>
           {title}
@@ -40,7 +40,7 @@ const CardList = (props) => {
 
 CardList.propTypes = {
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  image: PropTypes.node.isRequired,
+  image: PropTypes.any.isRequired,
   title: PropTypes.string,
   subtitle: PropTypes.string,
   rate: PropTypes.number,

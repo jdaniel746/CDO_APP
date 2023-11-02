@@ -53,7 +53,6 @@ export const login = (login, callback) => async (dispatch) => {
 
       dispatch(onLoginSuccess(data));
       if (typeof callback === 'function') {
-        console.log("SETTING CALLBACK TRUE")
         AsyncStorage.setItem('user', JSON.stringify(data.user));
         callback({ success: true });
       }
@@ -66,9 +65,7 @@ export const login = (login, callback) => async (dispatch) => {
 
 export const register = (user, callback) => async (dispatch) => {
   try {
-    console.log("values:"+JSON.stringify(user))
     const response = await createUserWithEmailAndPassword(auth, user.email, user.password);
-    console.log("response "+response)
     const { uid } = response.user;
     const user_ = {
       id: uid,
