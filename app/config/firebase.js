@@ -11,14 +11,15 @@ import { getStorage } from 'firebase/storage';
 //import { Env } from '@env';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyCO8TT14jI6lSiPPjB8BXJATn0wcsO8B2w',
-  authDomain: 'cdo-app-39c97.firebaseapp.com',
-  projectId: 'cdo-app-39c97',
-  storageBucket: 'cdo-app-39c97.appspot.com',
-  messagingSenderId: '1006268452087',
-  appId: '1:1006268452087:web:338c0211a2a55b803fd7f2',
+  apiKey: 'AIzaSyAj3LYrMKPZ4HPT4hIuqu-uNMbznfudad4',
+  authDomain: 'cdocaracas-ed2d3.firebaseapp.com',
+  projectId: 'cdocaracas-ed2d3',
+  storageBucket: 'cdocaracas-ed2d3.appspot.com',
+  messagingSenderId: '25084387666',
+  appId: '1:25084387666:web:715d06c2caa65720891a8b',
   measurementId: ''
 };
+
 
 const app = initializeApp(firebaseConfig);
 /*const auth = initializeAuth(app, {

@@ -190,11 +190,11 @@ const Navigator = () => {
     <View style={{ flex: 1, position: 'relative' }}>
       <NavigationContainer theme={theme} ref={navigationRef}>
         <MainStack.Navigator
-          initialRouteName={auth.user ? 'Main' : 'Auth'}
+            initialRouteName={auth.user && auth.user.id != null ? 'Main' : 'Auth'}
           screenOptions={{
             headerShown: false
           }}>
-          {auth.user ? (
+          {auth.user && auth.user.id != null ? (
             <>
               <MainStack.Screen key="Main" name="Main" component={MainScreens} />
             </>

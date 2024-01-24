@@ -41,7 +41,7 @@ export const PTeamMembersInCreate = [
 export const GroupLeaders = [
   {
     id: 1,
-    name: 'Naomí Yepes',
+    name: 'Leo Yepes',
     image: Images.profile4
   },
   {

@@ -136,7 +136,6 @@ const AddNew = (props) => {
           }}
           validationSchema={newValidationSchema}
           onSubmit={(values) => {
-            console.log("hello")
             onAddNew(values);
           }}>
           {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
