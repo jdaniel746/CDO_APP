@@ -53,7 +53,7 @@ const newValidationSchema = yup.object().shape({
 });
 
 
-const AddNew = (props) => {
+const NewPerson = (props) => {
   const { navigation } = props;
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -350,4 +350,4 @@ const AddNew = (props) => {
 };
 
 
-export default AddNew;
+export default NewPerson;
