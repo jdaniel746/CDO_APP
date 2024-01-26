@@ -3,6 +3,10 @@ import { BaseColor, BaseStyle, useTheme } from '@config';
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { AuthActions } from '../../actions';
+import { useDispatch } from 'react-redux';
+import Toast from 'react-native-toast-message';
+const { resetPassword } = AuthActions;
 
 const successInit = {
   email: true,
@@ -14,6 +18,7 @@ const ResetPassword = (props) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(successInit);
+  const dispatch = useDispatch();
 
   const onReset = () => {
     if (email == '') {
@@ -23,10 +28,8 @@ const ResetPassword = (props) => {
       });
     } else {
       setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        navigation.navigate('SignIn');
-      }, 500);
+      console.log("epa")
+      dispatch(resetPassword(email, (response) => {console.log(response)} ))
     }
   };
 

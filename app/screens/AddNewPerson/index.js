@@ -18,17 +18,21 @@ import { storage } from '@config/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import Toast from 'react-native-toast-message';
 import UserIcon from '../../assets/images/user.png'
+import { AuthActions } from '@actions';
+//import * as ImagePicker from 'expo-image-picker';
+//import * as ImageManipulator from 'expo-image-manipulator';
+
 
 const { fetchPerson, updatePerson } = PersonActions;
 //const minDate = dayjs().add(2, 'day').format('YYYY-MM-DD');
-const profileValidationSchema = yup.object().shape({
+
+const newValidationSchema = yup.object().shape({
   identify: yup.string().min(7, 'error.identify.min').max(8, 'error.identify.max'),
   firstname: yup
     .string()
     .required('error.firstname.required')
     .min(3, 'error.firstname.min')
     .max(15, 'error.firstname.max'),
-  middlename: yup.string().min(3, 'error.middlename.min').max(20, 'error.middlename.max'),
   lastname: yup
     .string()
     .required('error.lastname.required')
@@ -38,18 +42,24 @@ const profileValidationSchema = yup.object().shape({
   address: yup.string().min(10, 'error.address.min').max(100, 'error.address.max'),
   birthdate: yup.date(),
   phone: yup.number().test('len', 'error.phone.length', (val) => val.toString().length === 7),
-  code: yup.number().test('len', 'error.code.length', (val) => val.toString().length === 3)
+  local: yup.number().test('len', 'error.phone.length', (val) => val.toString().length === 7),
+  code: yup.number().test('len', 'error.code.length', (val) => val.toString().length === 3),
+  code_local: yup.number().test('len', 'error.code.length', (val) => val.toString().length === 3),
+  invitadoPor: yup
+    .string()
+    .required('error.invitadoPor.required')
+    .min(3, 'error.invitadoPor.min')
+    .max(15, 'error.invitadoPor.max'),
 });
 
-const ProfileEdit = (props) => {
+
+const AddNew = (props) => {
   const { navigation } = props;
-  const auth = useSelector((state) => state.auth);
-  const user = auth.user;
-  const person = useSelector((state) => state.person);
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const [avatar, setAvatar] = useState(user.avatar);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+
   const [birthdate, setBirthdate] = useState();
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -67,133 +77,68 @@ const ProfileEdit = (props) => {
     hideDateTimePicker();
   };
 
-  useEffect(() => {
-  }, [birthdate]);
+  const onAddNew = (values) => {
+    if (
+      values.identify !== '' &&
+      values.firstname !== '' &&
+      values.lastname !== '' &&
+      values.address !== '' &&
+      values.birthdate !== '' &&
+      values.code !== '' &&
+      values.phone!== '' &&
+      values.code_local!== '' &&
+      values.code_local!== '' &&
+      values.local!== '' &&
+      values.invitadoPor !== ''
 
-  useEffect(() => {
-    if (!person.person) {
-      try {
-        setIsLoading(true);
-        dispatch(
-          fetchPerson(user.id, (response) => {
-            console.log('response:' + JSON.stringify(response));
-            setIsLoading(false);
-            if(!response.success){
-              Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: response.message
-              });
-            }
-          })
-        );
-      } catch (e) {
-        setIsLoading(false);
-        console.log('ERROR PERSONA :' + e);
-      }
-    }
-  }, [person]);
-
-  const handlerUpdate = (form) => {
-    setIsLoading(true);
-    form.id = user.id;
-    form.photo = avatar;
-    form.birthdate = birthdate;
-    dispatch(
-      updatePerson(form, (response) => {
-        console.log('responseU:' + JSON.stringify(response));
-        setIsLoading(false);
-        if (response.success) {
-          Toast.show({
-            type: 'success',
-            text1: 'Exito',
-            text2: ' Actualizacion del perfil exitosa!'
-          });
-        } else {
-          Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: 'No se pudo actualizar tu perfil!'
-          });
-        }
-      })
-    );
-  };
-
-  const ImageChoiceAndUpload = async () => {
-    try {
-      if (Platform.OS === 'ios') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          alert('Permission is required for use.');
-          return;
-        }
-      }
-      const result = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: false,
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsMultipleSelection: false
-      });
-      //AQUI ESTA//
-      if (!result.canceled) {
-        let actions = [];
-        actions.push({ resize: { width: 300 } });
-        const manipulatorResult = await ImageManipulator.manipulateAsync(
-          result.assets[0].uri,
-          actions,
-          {
-            compress: 0.4
-          }
-        );
-        const localUri = await fetch(manipulatorResult.uri);
-        const localBlob = await localUri.blob();
-        const filename = user.id;
-        const storageRef = ref(storage, `perfil/${user.id}/` + filename);
-        const uploadTask = uploadBytesResumable(storageRef, localBlob);
-        uploadTask.on(
-          'state_changed',
-          (snapshot) => {
-            let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-           // setProgress(parseInt(progress) + '%');
-          },
-          (error) => {
-            console.log(error);
-            alert('Upload failed.');
-          },
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              //setProgress('');
-              setAvatar(downloadURL);
+    ) {
+      setLoading(true);
+      dispatch(
+        register(values, (response) => {
+          if (response.success) {
+            Toast.show({
+              type: 'success',
+              text1: 'Exito',
+              text2: ' Registro exitoso!'
             });
+            navigation.navigate('Assistance');
+          } else {
+            console.log('error' + JSON.stringify(response));
+            setLoading(false);
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+              text2: ' No se pudo registrar!'
+            });
+            
           }
-        );
-      }
-    } catch (e) {
-      console.log('error', e.message);
+        })
+      );
     }
   };
-
   return (
     <>
-      <Spinner visible={isLoading} />
-      {person.person && (
+    <Spinner visible={isLoading} />
+
+     
         <Formik
           initialValues={{
-            identify: person.person?.identify,
-            firstname: person.person?.firstname,
-            middlename: person.person?.middlename,
-            lastname: person.person?.lastname,
-            surname: person.person?.surname,
-            address: person.person?.address,
-            birthdate: person.person?.birthdate ?? birthdate,
-            phone: person.person?.phone,
-            code: person.person?.code
+            identify: '',
+            firstname: '',
+            lastname: '',
+            address: '', 
+            birthdate: '',
+            phone: '',
+            code: '',
+            code_local: '',
+            local: '',
+            
           }}
-          validationSchema={profileValidationSchema}
+          validationSchema={newValidationSchema}
           onSubmit={(values) => {
-            handlerUpdate(values);
+            onAddNew(values);
           }}>
-          {({ handleSubmit, setFieldValue, handleChange, handleBlur, values, errors }) => (
+          {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
             <SafeAreaView style={BaseStyle.safeAreaView} edges={['right', 'top', 'left']}>
               <DateTimePicker
                 mode="date"
@@ -202,7 +147,7 @@ const ProfileEdit = (props) => {
                 onCancel={hideDateTimePicker}
               />
               <Header
-                title={t('edit_profile')}
+                title={t('Nuevo Convertido')}
                 renderLeft={() => {
                   return (
                     <Icon name="angle-left" size={20} color={colors.primary} enableRTL={true} />
@@ -214,18 +159,9 @@ const ProfileEdit = (props) => {
                 onPressRight={() => {}}
               />
               <ScrollView>
-                <View style={styles.contain}>
+              <View style={styles.contain}>
                   {/*<View><Image source={image} style={styles.thumb} /></View>*/}
                   
-                  <CardList
-                    style={{}}
-                    image={{ uri: avatar }}
-                    title="Pastor(a)"
-                    subtitle="Description new"
-                    rate={4.5}
-                    onPress={ImageChoiceAndUpload}
-                    onPressTag={() => {}}
-                  />
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
                       {t('identify')}
@@ -259,24 +195,8 @@ const ProfileEdit = (props) => {
                     placeholderTextColor={BaseColor.grayColor}
                     value={values.firstname}
                     selectionColor={colors.primary}
-                  />
-                  <View style={styles.contentTitle}>
-                    <Text headline semibold>
-                      {t('input_middlename')}
-                    </Text>
-                  </View>
-                  <TextInput
-                    style={BaseStyle.textInput}
-                    onChangeText={handleChange('middlename')}
-                    name="middlename"
-                    onBlur={handleBlur('middlename')}
-                    errors={errors.middlename}
-                    autoCorrect={false}
-                    placeholder={t('input_middlename')}
-                    placeholderTextColor={BaseColor.grayColor}
-                    value={values.middlename}
-                    selectionColor={colors.primary}
-                  />
+                  />           
+                  
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
                       {t('input_lastname')}
@@ -294,22 +214,7 @@ const ProfileEdit = (props) => {
                     value={values.lastname}
                     selectionColor={colors.primary}
                   />
-                  <View style={styles.contentTitle}>
-                    <Text headline semibold>
-                      {t('input_surname')}
-                    </Text>
-                  </View>
-                  <TextInput
-                    style={BaseStyle.textInput}
-                    onChangeText={handleChange('surname')}
-                    name="surname"
-                    onBlur={handleBlur('surname')}
-                    errors={errors.surname}
-                    autoCorrect={false}
-                    placeholder={t('input_surname')}
-                    placeholderTextColor={BaseColor.grayColor}
-                    value={values.surname}
-                  />
+                  
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
                       {t('input_address')}
@@ -380,19 +285,72 @@ const ProfileEdit = (props) => {
                       />
                     </View>
                   </View>
+
+
+                  <View style={styles.contentTitle}>
+                    <Text headline semibold>
+                      {t('Telefono local')}
+                    </Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                    <View style={{ flex: 3 }}>
+                      <TextInput
+                        onChangeText={handleChange('code_local')}
+                        placeholder={t('code_local')}
+                        name="code_local"
+                        onBlur={handleBlur('code_local')}
+                        errors={errors.code_local}
+                        keyboardType="numeric"
+                        value={values.code_local}
+                      />
+                    </View>
+                    <View style={{ flex: 7, marginLeft: 10 }}>
+                      <TextInput
+                        onChangeText={handleChange('local')}
+                        placeholder={t('local_number')}
+                        keyboardType="numeric"
+                        name="local"
+                        onBlur={handleBlur('local')}
+                        errors={errors.local}
+                        value={values.local}
+                      />
+
+                    </View>
+                  </View>
+
+                  <View style={styles.contentTitle}>
+                    <Text headline semibold>
+                      {t('¿Quien te invito?')}
+                    </Text>
+                  </View>
+                  <TextInput
+                    style={BaseStyle.textInput}
+                    onChangeText={handleChange('invitadoPor')}
+                    name="invitadoPor"
+                    onBlur={handleBlur('Quien te invito')}
+                    errors={errors.invitadoPor}
+                    autoCorrect={false}
+                    placeholder={t('input_invitadoPor')}
+                    placeholderTextColor={BaseColor.grayColor}
+                    value={values.invitadoPor}
+                    selectionColor={colors.primary}
+                  />           
+                  
+
+                  
                 </View>
               </ScrollView>
               <View style={{ padding: 20 }}>
-                <Button full onPress={handleSubmit}>
+                <Button full onPress={handleSubmit} loading={loading}>
                   {t('confirm')}
                 </Button>
               </View>
             </SafeAreaView>
           )}
         </Formik>
-      )}
     </>
   );
 };
 
-export default ProfileEdit;
+
+export default AddNew;

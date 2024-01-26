@@ -45,8 +45,8 @@ export const FFriends = [
   },
   {
     id: 8,
-    name: 'Lacara Jones',
-    total: '@lacara.jones',
+    name: 'Laca Jones',
+    total: '@laca.jones',
     image: Images.profile4
   }
 ];

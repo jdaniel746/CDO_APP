@@ -3,6 +3,7 @@ import { Button, SafeAreaView, Text, TextInput } from '@components';
 import { BaseColor, BaseStyle, useTheme, Images } from '@config';
 import React, { useState } from 'react';
 import { Formik } from 'formik';
+import Toast from 'react-native-toast-message';
 import {
   ScrollView,
   TouchableOpacity,
@@ -37,14 +38,37 @@ const SignIn = (props) => {
         login({ user: values.user, password: values.password }, (response) => {
           if (response.success) {
             navigation.navigate('Main');
+            Toast.show({
+              type: 'success',
+              text1: 'Exito',
+              text2: ' Ingreso exitoso!'
+            });
+            navigation.navigate('SignIn');
           } else {
             console.log('error' + JSON.stringify(response));
             setLoading(false);
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+              text2: ' Las credenciales no son validas!'
+            });
+          
           }
+
+          if (response.success) {
+            navigation.navigate('Main');
+          } else {
+            console.log('error' + JSON.stringify(response));
+            setLoading(true);
+            
+          }
+
+
         })
       );
     }
-  };
+  }; 
+
 
   const offsetKeyboard = Platform.select({
     ios: 0,
