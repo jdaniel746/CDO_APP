@@ -83,7 +83,7 @@ export const register = (user, callback) => async (dispatch) => {
       invitedBy: ''
     };
 
-    const new_ = {
+    const New_ = {
       address: '' ,
       lastname: '',
       birthdate: '',
@@ -101,8 +101,8 @@ export const register = (user, callback) => async (dispatch) => {
     await setDoc(personRef, person_);
     const usersRef = doc(firestore, 'users', uid);
     await setDoc(usersRef, user_);
-    const newRef = doc(firestore, 'new', uid);
-    await setDoc(newRef, new_);
+    const NewRef = doc(firestore, 'New', uid);
+    await setDoc(NewRef, New_);
 
     dispatch(onRegister(user_));
     if (typeof callback === 'function') {

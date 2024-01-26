@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
-import { getMessaging } from 'firebase/messaging';
+//import { getAnalytics } from 'firebase/analytics';
+//import { getMessaging } from 'firebase/messaging';
 // authentication
 import { initializeAuth, getAuth } from 'firebase/auth';
 /*import { getReactNativePersistence } from 'firebase/auth/react-native';
@@ -30,8 +30,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage();
-const analytics = getAnalytics(app);
+//const analytics = getAnalytics(app);
 
-export const messaging =getMessaging(app);
+//export const messaging = getMessaging(app);
 
 export { auth, firestore, storage };

@@ -30,6 +30,8 @@ import SelectDarkOption from '../screens/SelectDarkOption';
 import SelectFontOption from '../screens/SelectFontOption';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import PSelectAssignee from '../screens/PSelectAssignee';
+import AddNewPerson from '../screens/AddNewPerson';
+import FCategory from '../screens/FCategory';
 
 const SettingsStack = createStackNavigator();
 const AssistanceStack = createStackNavigator();
@@ -61,6 +63,8 @@ const Assistance = () => {
       }}>
       <SettingsStack.Screen key="Assistance" name="Assistance" component={AssistanceGroup} />
       <SettingsStack.Screen key="PeopleSelect" name="PeopleSelect" component={PSelectAssignee} />
+      <SettingsStack.Screen key="AddNewPerson" name="AddNewPerson" component={AddNewPerson} />
+      <SettingsStack.Screen key="FCategory" name="FCategory" component={FCategory} />
     </AssistanceStack.Navigator>
   );
 };
@@ -151,7 +155,7 @@ const Navigator = () => {
   const navigationRef = useRef(null);
 
   useEffect(() => {
-    console.log("STATE NAVIGATION: " +JSON.stringify(auth))
+    console.log('STATE NAVIGATION: ' + JSON.stringify(auth));
   }, [auth.user]);
 
   useEffect(() => {
@@ -190,7 +194,7 @@ const Navigator = () => {
     <View style={{ flex: 1, position: 'relative' }}>
       <NavigationContainer theme={theme} ref={navigationRef}>
         <MainStack.Navigator
-            initialRouteName={auth.user && auth.user.id != null ? 'Main' : 'Auth'}
+          initialRouteName={auth.user && auth.user.id != null ? 'Main' : 'Auth'}
           screenOptions={{
             headerShown: false
           }}>
