@@ -88,6 +88,7 @@ const Assistance = () => {
       <SettingsStack.Screen key="PeopleSelect" name="PeopleSelect" component={PSelectAssignee} />
       <SettingsStack.Screen key="AddNewPerson" name="AddNewPerson" component={AddNewPerson} />
       <SettingsStack.Screen key="FCategory" name="FCategory" component={FCategory} />
+      
     </AssistanceStack.Navigator>
   );
 };

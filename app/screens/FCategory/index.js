@@ -24,7 +24,7 @@ const Category = (props) => {
     const [category, setCategory] = useState(FCategoryData);
     const [loading, setLoading] = useState(true);
 
-
+    
 
     useEffect(() => {
         setTimeout(() => {

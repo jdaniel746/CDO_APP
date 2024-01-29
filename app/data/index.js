@@ -54,6 +54,7 @@ export { FFriends } from './fFriend';
 //export { MaziListApp } from './maziHome';
 // export { FCategoryData } from './fCategory';
 export { PProjectHome } from './pHome';
+export { FCategoryData } from './fCategory';
 // export { PProject, PProjectType, PProjectAction } from './pProject';
 export { PTeamMembersInCreate, PAttachments, GroupLeaders } from './pProjectCreate';
 // export { PTaskStatus, PTaskType, PTaskPriority } from './pTaskCreate';
