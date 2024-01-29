@@ -4,9 +4,13 @@ module.exports = function (api) {
     presets: ['babel-preset-expo', 'module:metro-react-native-babel-preset'],
     plugins: [
       'react-native-reanimated/plugin',
+      "module:react-native-dotenv",
       [
         'module-resolver',
         {
+          envName: "APP_ENV",
+          moduleName: "@env",
+          path: ".env",
           alias: {
             app: './app',
             '@actions': './app/actions',
