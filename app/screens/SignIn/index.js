@@ -1,130 +1,145 @@
+import { AuthActions } from '@actions';
+import { Button, SafeAreaView, Text, TextInput } from '@components';
+import { BaseColor, BaseStyle, useTheme, Images } from '@config';
+import React, { useState } from 'react';
+import { Formik } from 'formik';
+import Toast from 'react-native-toast-message';
 import {
-  Header,
-  Icon,
-  ListMenuIcon,
-  ListSearchResultLabel,
-  ProfileAuthor,
-  SafeAreaView,
-  Text,
-} from "@components";
-import { BaseStyle, Images, useTheme } from "@config";
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { ScrollView, View } from "react-native";
+  ScrollView,
+  TouchableOpacity,
+  View,
+  ImageBackground,
+  Image,
+  KeyboardAvoidingView,
+  Platform
+} from 'react-native';
+import { useDispatch } from 'react-redux';
+import styles from './styles';
+import { useTranslation } from 'react-i18next';
+import * as yup from 'yup';
 
-const PredicasDeGrupo = ({ navigation }) => {
+const { login } = AuthActions;
+const loginValidationSchema = yup.object().shape({
+  user: yup.string().email('error.email.invalid').required('error.email.required'),
+  password: yup.string().required('error.password.required')
+});
+
+const SignIn = (props) => {
+  const { navigation } = props;
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-      setTimeout(() => {
-          setLoading(false);
-      }, 1000);
-  }, []);
+  const onLogin = (values) => {
+    if (values.user !== '' && values.password !== '') {
+      setLoading(true);
+      dispatch(
+        login({ user: values.user, password: values.password }, (response) => {
+          if (response.success) {
+            navigation.navigate('Main');
+            Toast.show({
+              type: 'success',
+              text1: 'Exito',
+              text2: ' Ingreso exitoso!'
+            });
+            navigation.navigate('SignIn');
+          } else {
+            console.log('error' + JSON.stringify(response));
+            setLoading(false);
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+              text2: ' Las credenciales no son validas!'
+            });
+          
+          }
 
-  const renderContent = () => {
-      return (
-          <View style={{ flex: 1, backgroundColor: "transparent" }}>
-              <Header
-                  title={"May 01 2021 05:30 AM"}
-                  renderLeft={() => {
-                      return (
-                          <Icon
-                              name="angle-left"
-                              size={20}
-                              color={colors.text}
-                              enableRTL={true}
-                          />
-                      );
-                  }}
-                  renderRight={() => {
-                      return (
-                          <Text body1 lightPrimaryColor>
-                              {t("close")}
-                          </Text>
-                      );
-                  }}
-                  onPressLeft={() => navigation.goBack()}
-                  onPressRight={() => navigation.navigate("FHome")}
-              />
-              <ScrollView contentContainerStyle={{ paddingHorizontal: 20 }}>
-                  <ProfileAuthor
-                      style={{}}
-                      image={Images.profile2}
-                      name="Steve Garrett"
-                      description="Paypal - @steve.garrett"
-                      textRight=""
-                      style={{}}
-                      onPress={() => {}}
-                  />
-                  <Text body2>
-                      Nulla quis lorem ut libero malesuada feugiat. Donec
-                      rutrum congue leo eget malesuada. Nulla quis lorem ut
-                      libero malesuada feugiat. Vestibulum ante ipsum primis
-                      in faucibus orci luctus et ultrices posuere cubilia
-                      Curae
-                  </Text>
-                  <ListSearchResultLabel
-                      style={{ marginTop: 25 }}
-                      title={t("from")}
-                      textLeft={"Paypal Balance"}
-                      textRight={"$980.00"}
-                      onPress={() => {}}
-                  />
-                  <ListSearchResultLabel
-                      style={{ marginTop: 5 }}
-                      title={t("transaction_type")}
-                      textLeft={"Money Sent"}
-                      textRight={""}
-                      onPress={() => {}}
-                  />
-                  <ListSearchResultLabel
-                      style={{ marginTop: 5 }}
-                      title={t("category")}
-                      textLeft={"Friend & Family"}
-                      textRight={""}
-                      onPress={() => {}}
-                  />
-                  <ListSearchResultLabel
-                      style={{ marginTop: 5 }}
-                      title={t("transaction_id")}
-                      textLeft={"5N019383MNHU"}
-                      textRight={"08:00:21 PM GMT+7"}
-                      onPress={() => {}}
-                  />
-                  <Text title3 style={{ marginTop: 40 }}>
-                      {t("contact_information")}
-                  </Text>
-                  <ListMenuIcon
-                      style={{ paddingVertical: 15 }}
-                      icon={"envelope"}
-                      title={"steve.garrett@passionui.com"}
-                  />
-                  <ListMenuIcon
-                      style={{ paddingVertical: 15 }}
-                      icon={"list"}
-                      title={"See History"}
-                  />
-                  <ListMenuIcon
-                      style={{ paddingVertical: 15 }}
-                      icon={"money-bill-alt"}
-                      title={"Send Money"}
-                  />
-              </ScrollView>
-          </View>
+          if (response.success) {
+            navigation.navigate('Main');
+          } else {
+            console.log('error' + JSON.stringify(response));
+            setLoading(true);
+            
+          }
+
+
+        })
       );
-  };
+    }
+  }; 
+
+
+  const offsetKeyboard = Platform.select({
+    ios: 0,
+    android: 20
+  });
 
   return (
-      <SafeAreaView
-          style={[BaseStyle.safeAreaView]}
-          edges={["right", "top", "left"]}
-      >
-          {renderContent()}
-      </SafeAreaView>
+    <Formik
+      initialValues={{ user: '', password: '' }}
+      validationSchema={loginValidationSchema}
+      onSubmit={(values) => {
+        onLogin(values);
+      }}>
+      {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
+        <SafeAreaView style={BaseStyle.safeAreaView} edges={['right', 'top', 'left']}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={offsetKeyboard}
+            style={{
+              flex: 1
+            }}>
+            <View style={styles.contain}>
+              <TextInput
+                style={[BaseStyle.textInput]}
+                onChangeText={handleChange('user')}
+                name="user"
+                onBlur={handleBlur('user')}
+                autoCorrect={false}
+                errors={errors.user}
+                placeholder={t('input_email')}
+                placeholderTextColor={errors.user ? BaseColor.grayColor : colors.primary}
+                value={values.user}
+                selectionColor={errors.user ? '#ff0000' : colors.primary}
+              />
+              <TextInput
+                style={[BaseStyle.textInput, { marginTop: 10 }]}
+                name="password"
+                errors={errors.password}
+                onChangeText={handleChange('password')}
+                autoCorrect={false}
+                onBlur={handleBlur('password')}
+                placeholder={t('input_password')}
+                secureTextEntry={true}
+                placeholderTextColor={errors.password ? BaseColor.grayColor : colors.primary}
+                value={values.password}
+                selectionColor={colors.primary}
+              />
+              <View style={{ width: '100%', marginVertical: 16 }}>
+                <Button full loading={loading} style={{ marginTop: 20 }} onPress={handleSubmit}>
+                  {t('sign_in')}
+                </Button>
+              </View>
+              <View style={styles.contentActionBottom}>
+                <TouchableOpacity onPress={() => navigation.navigate('ResetPassword')}>
+                  <Text body2 grayColor>
+                    {t('forgot_your_password')}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+                  <Text body2 primaryColor>
+                    {t('not_have_account')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      )}
+    </Formik>
   );
 };
 
-export default PredicasDeGrupo;
+export default SignIn;

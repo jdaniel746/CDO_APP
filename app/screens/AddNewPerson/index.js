@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, RefreshControl, View } from "react-native";
 
-const Category = (props) => {
+const add = (props) => {
   const { navigation } = props;
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -113,4 +113,4 @@ const Category = (props) => {
   return renderContent();
 };
 
-export default Category;
+export default add;
