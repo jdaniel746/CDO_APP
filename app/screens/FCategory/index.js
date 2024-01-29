@@ -120,19 +120,6 @@ const Category = (props) => {
     return renderContent();
 };
 
-<ScrollView>
-<View style={styles.contain}>
-<CardList
-        style={{}}
-        //image={{ uri: avatar }}//
-        title="Pastor(a)"
-        subtitle="Description new"
-        rate={4.5}
-        onPress={Image}
-        onPressTag={() => {}}
-      />
-</View>
-</ScrollView>
 
 export default Category;
 
