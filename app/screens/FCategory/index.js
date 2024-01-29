@@ -1,3 +1,6 @@
+import { Image, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { CardList } from '@components';
+import styles from './styles';
 import {
     CategoryIcon,
     Header,
@@ -20,6 +23,8 @@ const Category = (props) => {
     const [modeView, setModeView] = useState("list");
     const [category, setCategory] = useState(FCategoryData);
     const [loading, setLoading] = useState(true);
+
+
 
     useEffect(() => {
         setTimeout(() => {
@@ -107,10 +112,27 @@ const Category = (props) => {
                     renderItem={renderItem}
                 />
             </SafeAreaView>
+           
+
         );
     };
 
     return renderContent();
 };
 
+<ScrollView>
+<View style={styles.contain}>
+<CardList
+        style={{}}
+        //image={{ uri: avatar }}//
+        title="Pastor(a)"
+        subtitle="Description new"
+        rate={4.5}
+        onPress={Image}
+        onPressTag={() => {}}
+      />
+</View>
+</ScrollView>
+
 export default Category;
+

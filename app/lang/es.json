@@ -341,6 +341,7 @@
 	"improve": "Improve",
 	"task_view": "Task View",
 	"all": "Todos",
+
 	"error.email.required": "Debe ingresar un correo electronico",
 	"error.email.invalid": "Ingrese un correo valido",
 	"error.password.required": "Debe ingresar una contrasena",
@@ -354,5 +355,17 @@
 	"error.lastname.max": "El apellido debe tener maximo 15 caracteres",
 	"error.birthdate.required": "La fecha de nacimiento es requerida",
 	"error.phone.length": "El telefono debe tener 7 digitos!",
-	"error.code.length": "El codigo debe tener 4 digitos!"
+	"error.code.length": "El codigo debe tener 4 digitos!",
+	"error.code.Invited_by": "El campo es requerido!",
+	"error.invitadoPor.required": "Debe ingresar un nombre",
+	"error.invitadoPor.min": "El nombre debe tener minimo 3 caracteres",
+	"error.invitadoPor.max": "El nombre debe tener maximo 15 caracteres",
+
+	"phone_local": "Telefono local",
+	"code_local": "Codigo",
+	"Invited_by": "Invitado por",
+	"local_number": "Numero local",
+	"Add_Person": "Agregar Persona"
+	
+	
 }
