@@ -32,6 +32,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import PSelectAssignee from '../screens/PSelectAssignee';
 import AddNewPerson from '../screens/AddNewPerson';
 import FCategory from '../screens/FCategory';
+import CustomDrawer from "./components/CustomDrawer";
 
 const SettingsStack = createStackNavigator();
 const AssistanceStack = createStackNavigator();
@@ -51,6 +52,28 @@ const AuthScreens = () => {
       <MainStack.Screen key="SingUp" name="SignUp" component={SignUp} />
       <MainStack.Screen key="ResetPassword" name="ResetPassword" component={ResetPassword} />
     </AuthStack.Navigator>
+  );
+};
+
+const DrawerNavigator = () => {
+  return (
+    <Drawer.Navigator
+      drawerContent={props => <CustomDrawer {...props} />}
+      screenOptions={{
+        headerShown: false,
+        drawerActiveBackgroundColor: '#aa18ea',
+        drawerActiveTintColor: '#fff',
+        drawerInactiveTintColor: '#333',
+        drawerLabelStyle: {
+          marginLeft: 0,
+          fontFamily: 'Roboto-Medium',
+          fontSize: 15,
+        },
+      }}
+    >
+      <Drawer.Screen name="Home" component={MainScreens} />
+      <Drawer.Screen name="Contact" component={PSelectAssignee} />
+    </Drawer.Navigator>
   );
 };
 
@@ -200,7 +223,7 @@ const Navigator = () => {
           }}>
           {auth.user && auth.user.id != null ? (
             <>
-              <MainStack.Screen key="Main" name="Main" component={MainScreens} />
+              <MainStack.Screen key="Main" name="Main" component={DrawerNavigator} />
             </>
           ) : (
             <MainStack.Screen key="Auth" name="Auth" component={AuthScreens} />
