@@ -5,6 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import styles from './styles';
 import {
+
   Button,
   Header,
   Icon,
@@ -21,6 +22,7 @@ import Avatars from '../../components/Avatars';
 import { useSelector } from 'react-redux';
 import DateTimePicker from "react-native-modal-datetime-picker";
 
+
 const gruposDelUsuario = [
   {
     value: 'most_helpful',
@@ -28,15 +30,16 @@ const gruposDelUsuario = [
   },
   {
     value: 'most_favourable',
-    text: 'Grupo 4.1.1'
+    text: 'Grupo 4.1.1.1'
   },
   {
     value: 'most_crictical',
-    text: 'Grupo 4.1.2'
+    text: 'Grupo 4.1.2',
   },
-  {
+
+  { 
     value: 'most_recent',
-    text: 'Grupo 4.1.3'
+    text: 'Grupo 4.1.3',
   }
 ];
 
@@ -97,6 +100,8 @@ const AssistanceGroup = () => {
   };
 
   const save = () => {
+    <Text body1 style={{ marginTop: 4, marginRight: 4 }}></Text>
+    
 
   }
 
@@ -125,6 +130,7 @@ const AssistanceGroup = () => {
           navigation.goBack();
         }}
       />
+     
       <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
         <DateTimePicker
           mode="date"
@@ -173,8 +179,9 @@ const AssistanceGroup = () => {
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}>
-                      <ProfileGridSmall image={item.image} name={item.name} onPress={() => {}} />
+                    <ProfileGridSmall image={item.image} name={item.name} onPress={() => {}} />
                     </View>
+                    
                     {index == assistants.length - 1 && (
                       <View
                         key={index}
@@ -185,7 +192,7 @@ const AssistanceGroup = () => {
                           marginBottom: 20
                         }}>
                         <PButtonAddUser
-                          onPress={() =>
+                          onPress={() => 
                             navigation.navigate('PeopleSelect', {
                               members: assistants
                             })
@@ -205,13 +212,14 @@ const AssistanceGroup = () => {
                     justifyContent: 'center'
                   }}>
                   <PButtonAddUser
-                    onPress={() =>
+                    onPress={() => 
                       navigation.navigate('PeopleSelect', {
                         members: PTeamMembersInCreate
                       })
                     }
                   />
                 </View>
+                
               )}
             </View>
           </View>
@@ -223,7 +231,7 @@ const AssistanceGroup = () => {
               style={[BaseStyle.textInput]}
               onChangeText={(text) => setOfferUSD(text)}
               autoCorrect={false}
-              placeholder={'$30'}
+              placeholder={'$ '}
               currency={true}
               placeholderTextColor={BaseColor.grayColor}
               value={offerUSD}
@@ -237,7 +245,7 @@ const AssistanceGroup = () => {
               style={[BaseStyle.textInput]}
               onChangeText={(text) => setOfferVES(text)}
               autoCorrect={false}
-              placeholder={'Bs120'}
+              placeholder={'Bs '}
               currency={true}
               placeholderTextColor={BaseColor.grayColor}
               value={offerVES}

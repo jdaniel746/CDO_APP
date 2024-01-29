@@ -49,15 +49,21 @@ const SignUp = (props) => {
       dispatch(
         register(values, (response) => {
           if (response.success) {
-            setLoading(false);
+            Toast.show({
+              type: 'success',
+              text1: 'Exito',
+              text2: ' Registro exitoso!'
+            });
             navigation.navigate('SignIn');
           } else {
+            console.log('error' + JSON.stringify(response));
+            setLoading(false);
             Toast.show({
               type: 'error',
               text1: 'Error',
-              text2: ' Error creando cuenta!'
+              text2: ' Este correo electronico ya esta en uso!'
             });
-            setLoading(false);
+            
           }
         })
       );

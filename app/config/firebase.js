@@ -1,4 +1,6 @@
 import { initializeApp } from 'firebase/app';
+//import { getAnalytics } from 'firebase/analytics';
+//import { getMessaging } from 'firebase/messaging';
 // authentication
 import { getAuth } from 'firebase/auth';
 /*import { getReactNativePersistence } from 'firebase/auth/react-native';
@@ -7,18 +9,18 @@ import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { getFirestore } from 'firebase/firestore';
 // cloud storage
 import { getStorage } from 'firebase/storage';
-
-//import { Env } from '@env';
+import { API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID } from "@env"
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyCO8TT14jI6lSiPPjB8BXJATn0wcsO8B2w',
-  authDomain: 'cdo-app-39c97.firebaseapp.com',
-  projectId: 'cdo-app-39c97',
-  storageBucket: 'cdo-app-39c97.appspot.com',
-  messagingSenderId: '1006268452087',
-  appId: '1:1006268452087:web:338c0211a2a55b803fd7f2',
+  apiKey: API_KEY,
+  authDomain: AUTH_DOMAIN,
+  projectId: PROJECT_ID,
+  storageBucket: STORAGE_BUCKET,
+  messagingSenderId: MESSAGING_SENDER_ID,
+  appId: APP_ID,
   measurementId: ''
 };
+
 
 const app = initializeApp(firebaseConfig);
 /*const auth = initializeAuth(app, {
@@ -27,5 +29,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage();
+//const analytics = getAnalytics(app);
+
+//export const messaging = getMessaging(app);
 
 export { auth, firestore, storage };

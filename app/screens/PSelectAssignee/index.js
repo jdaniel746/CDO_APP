@@ -97,7 +97,7 @@ export default function PSelectAssignee() {
           }}>
           <PButtonAddUser
             onPress={() =>
-              {}
+              navigation.navigate('FCategory')
             }/>
           <TextInput
             onChangeText={filterCategory}
