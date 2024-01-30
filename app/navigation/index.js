@@ -32,6 +32,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import PSelectAssignee from '../screens/PSelectAssignee';
 import AddNewPerson from '../screens/AddNewPerson';
 import PredicasDeGrupoSemanal from '../screens/PredicasDeGrupo';
+import Lista from '../screens/ListaDePredicas';
 
 import CustomDrawer from "./components/CustomDrawer";
 
@@ -42,7 +43,7 @@ const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
-const PredicasDeGrupoStack = createStackNavigator();
+const PredicasDeGrupoSemanalStack = createStackNavigator();
 
 
 const AuthScreens = () => {
@@ -83,12 +84,6 @@ const DrawerNavigator = () => {
     </Drawer.Navigator>
   );
 };
-
-
-
-
-
-
 
 const Assistance = () => {
   return (

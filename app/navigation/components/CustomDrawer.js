@@ -1,4 +1,4 @@
-import React from 'react';
+//import React from 'react';
 import {
   View,
   Text,
@@ -13,8 +13,28 @@ import {
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { AuthActions } from '@actions';
+
+import { UserData } from '@data';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+const { logout } = AuthActions;
 
 const CustomDrawer = props => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [userData] = useState(UserData[0]);
+  const auth = useSelector((state) => state.auth);
+  const user = auth.user;
+  const onLogOut = () => {
+    setLoading(true);
+    dispatch(
+      logout((response) => {
+        setLoading(false);
+        //navigation.navigate('Auth');
+      })
+    );
+  };
   return (
     <View style={{flex: 1}}>
       <DrawerContentScrollView
@@ -67,7 +87,7 @@ const CustomDrawer = props => {
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}} style={{paddingVertical: 15}}>
+        <TouchableOpacity onPress={() => onLogOut()} style={{paddingVertical: 15}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Ionicons name="exit-outline" size={22} />
             <Text
