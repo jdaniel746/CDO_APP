@@ -47,7 +47,7 @@ const FHistoryScreen = ({ navigation }) => {
                       );
                   }}
                   onPressLeft={() => navigation.goBack()}
-                  onPressRight={() => navigation.navigate("Home")}
+                  onPressRight={() => navigation.navigate("FHome")}
               />
               <View style={{ alignItems: "center" }}>
                   <ProfileGridSmall
