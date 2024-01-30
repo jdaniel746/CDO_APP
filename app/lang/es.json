@@ -342,6 +342,7 @@
 	"improve": "Improve",
 	"task_view": "Task View",
 	"all": "Todos",
+	"Preach of group": "Predicas de grupo",
 
 	"error.email.required": "Debe ingresar un correo electronico",
 	"error.email.invalid": "Ingrese un correo valido",

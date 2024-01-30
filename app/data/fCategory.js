@@ -4,7 +4,7 @@ export const FCategoryData = [
 
     {
         id: "4",
-        screen: "Predicas",
+        screen: "PredicasDeGrupo",
         icon: "grip-lines",
         title: "El amor de Dios",
         subtitle: "SEMANA 1",

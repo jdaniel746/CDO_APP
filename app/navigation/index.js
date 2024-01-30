@@ -31,8 +31,8 @@ import SelectFontOption from '../screens/SelectFontOption';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import PSelectAssignee from '../screens/PSelectAssignee';
 import AddNewPerson from '../screens/AddNewPerson';
-import PredicasDeGrupo from '../screens/PredicasDeGrupo';
-import Predicas from '../screens/Predicas';
+import PredicasDeGrupoSemanal from '../screens/PredicasDeGrupo';
+
 import CustomDrawer from "./components/CustomDrawer";
 
 
@@ -42,6 +42,8 @@ const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+const PredicasDeGrupoStack = createStackNavigator();
+
 
 const AuthScreens = () => {
   const intro = useSelector(getInto);
@@ -63,7 +65,7 @@ const DrawerNavigator = () => {
       drawerContent={props => <CustomDrawer {...props} />}
       screenOptions={{
         headerShown: false,
-        drawerActiveBackgroundColor: '#aa18ea',
+        drawerActiveBackgroundColor: '#da0048',
         drawerActiveTintColor: '#fff',
         drawerInactiveTintColor: '#333',
         drawerLabelStyle: {
@@ -75,7 +77,7 @@ const DrawerNavigator = () => {
     >
       <Drawer.Screen name="Home" component={MainScreens} />
       <Drawer.Screen name="Contact" component={PSelectAssignee} />
-      <Drawer.Screen name="Preach of group" component={PredicasDeGrupo} />
+      <Drawer.Screen name="Preach of group" component={ PredicasDeGrupoSemanal} />
       <Drawer.Screen name="Assistance" component={Assistance} />
 
     </Drawer.Navigator>
@@ -83,22 +85,8 @@ const DrawerNavigator = () => {
 };
 
 
-const PreachOfgroup = () => {
-  return (
-    <PreachOfgroupStack.Navigator
-      initialRouteName={'Preach Of group'}
-      screenOptions={{
-        headerShown: false
-      }}>
-      <SettingsStack.Screen key="Predicas" name="Predicas" component={Predicas} />
-      <SettingsStack.Screen key="PeopleSelect" name="PeopleSelect" component={PSelectAssignee} />
-      <SettingsStack.Screen key="AddNewPerson" name="AddNewPerson" component={AddNewPerson} />
-      
-      
-      
-    </PreachOfgroupStack.Navigator>
-  );
-};
+
+
 
 
 
@@ -118,6 +106,7 @@ const Assistance = () => {
     </AssistanceStack.Navigator>
   );
 };
+
 
 const ProfileSettings = () => {
   return (

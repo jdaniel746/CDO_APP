@@ -19,9 +19,10 @@ const CustomDrawer = props => {
     <View style={{flex: 1}}>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={{backgroundColor: '#8200d6'}}>
+        contentContainerStyle={{backgroundColor: '#da0048'}}>
         <ImageBackground
-          source={require('../../assets/images/menu-bg.jpeg')}
+          
+          //source={require('../../assets/images/magenta.png')}//
           style={{padding: 20}}>
           <Image
             source={require('../../assets/images/user.png')}
@@ -34,7 +35,7 @@ const CustomDrawer = props => {
               fontFamily: 'Roboto-Medium',
               marginBottom: 5,
             }}>
-            John Doe
+            Katherin Valero
           </Text>
           <View style={{flexDirection: 'row'}}>
             <Text
