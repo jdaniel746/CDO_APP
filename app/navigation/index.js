@@ -31,8 +31,10 @@ import SelectFontOption from '../screens/SelectFontOption';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import PSelectAssignee from '../screens/PSelectAssignee';
 import AddNewPerson from '../screens/AddNewPerson';
-import FCategory from '../screens/FCategory';
+import PredicasDeGrupo from '../screens/PredicasDeGrupo';
+import Predicas from '../screens/Predicas';
 import CustomDrawer from "./components/CustomDrawer";
+
 
 const SettingsStack = createStackNavigator();
 const AssistanceStack = createStackNavigator();
@@ -73,9 +75,32 @@ const DrawerNavigator = () => {
     >
       <Drawer.Screen name="Home" component={MainScreens} />
       <Drawer.Screen name="Contact" component={PSelectAssignee} />
+      <Drawer.Screen name="Preach of group" component={PredicasDeGrupo} />
+      <Drawer.Screen name="Assistance" component={Assistance} />
+
     </Drawer.Navigator>
   );
 };
+
+
+const PreachOfgroup = () => {
+  return (
+    <PreachOfgroupStack.Navigator
+      initialRouteName={'Preach Of group'}
+      screenOptions={{
+        headerShown: false
+      }}>
+      <SettingsStack.Screen key="Predicas" name="Predicas" component={Predicas} />
+      <SettingsStack.Screen key="PeopleSelect" name="PeopleSelect" component={PSelectAssignee} />
+      <SettingsStack.Screen key="AddNewPerson" name="AddNewPerson" component={AddNewPerson} />
+      
+      
+      
+    </PreachOfgroupStack.Navigator>
+  );
+};
+
+
 
 const Assistance = () => {
   return (
@@ -87,7 +112,7 @@ const Assistance = () => {
       <SettingsStack.Screen key="Assistance" name="Assistance" component={AssistanceGroup} />
       <SettingsStack.Screen key="PeopleSelect" name="PeopleSelect" component={PSelectAssignee} />
       <SettingsStack.Screen key="AddNewPerson" name="AddNewPerson" component={AddNewPerson} />
-      <SettingsStack.Screen key="FCategory" name="FCategory" component={FCategory} />
+      
       
       
     </AssistanceStack.Navigator>
@@ -146,15 +171,6 @@ const MainScreens = () => {
         options={{
           tabBarIcon: ({ color }) => tabBarIcon({ color, name: 'home' }),
           title: t('Home')
-        }}
-      />
-      <BottomTab.Screen
-        key="AssistanceGroup"
-        name="AssistanceGroup"
-        component={Assistance}
-        options={{
-          tabBarIcon: ({ color }) => tabBarIcon({ color, name: 'clipboard-check' }),
-          title: t('Asistencia')
         }}
       />
       <BottomTab.Screen
