@@ -9,9 +9,22 @@
 
 const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
+const functions = require("firebase-functions")
+const express = require("express")
+const admin = require("firebase-admin");
+const app = express()
+const  https = require("firebase-functions");
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+const  serviceAccount = require("./permisions.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+app.use(require("./graphql/server"))
+//const api = https.onRequest(gqlServer());
+//app.use(require('./routes/assistance.routes'));
+//export { api }
+exports.app = functions.https.onRequest(app);
 
 // exports.helloWorld = onRequest((request, response) => {
 //   logger.info("Hello logs!", {structuredData: true});
