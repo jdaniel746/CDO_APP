@@ -13,50 +13,17 @@ const functions = require("firebase-functions")
 const express = require("express")
 const admin = require("firebase-admin");
 const app = express()
+const  https = require("firebase-functions");
+
 const  serviceAccount = require("./permisions.json");
-const { gql, ApolloServer} = require("apollo-server-express");
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
-
-const db = admin.firestore();
-
-const typeDefs = gql`
-  type Grupos {
-    address: String
-    id: String!,
-    leaders: String
-    localization: String
-    name: String
-    photo: String
-    red: String
-    status: String
-    persons: [String]
-  }
-  
-  type Query {
-    grupos(id: String): [Grupos]
-  }
-`
-async function startApolloServer(typeDefs, resolvers) {
-  const server = new ApolloServer({typeDefs, resolvers})
-  await server.start()
-  server.applyMiddleware({app, path: "/", cors: true})
-}
-const resolvers = {
-  Query: {
-    grupos: async (_parent, args, _context) => {
-      const doc = await db.collection('grupos').where("id", "==", args.id).get()
-   /*   doc.forEach(d => {
-        console.log("sdf"+d.data())
-      })*/
-
-      return doc.docs.map(f => f.data());
-    }
-  }
-}
-startApolloServer(typeDefs, resolvers)
-app.use(require('./routes/assistance.routes'));
+app.use(require("./graphql/server"))
+//const api = https.onRequest(gqlServer());
+//app.use(require('./routes/assistance.routes'));
+//export { api }
 exports.app = functions.https.onRequest(app);
 
 // exports.helloWorld = onRequest((request, response) => {
