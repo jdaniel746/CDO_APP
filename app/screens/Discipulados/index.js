@@ -6,7 +6,7 @@ import {
     TextInput,
 } from "@components";
 import { BaseColor, BaseStyle, Typography, useTheme } from "@config";
-import { FCategoryData } from "@data";
+import { FCategoryDataDiscipulado } from "@data";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, RefreshControl, View } from "react-native";
@@ -18,7 +18,7 @@ const Discipulados = (props) => {
     const [refreshing, setRefreshing] = useState(false);
     const [search, setSearch] = useState("");
     const [modeView, setModeView] = useState("list");
-    const [category, setCategory] = useState(FCategoryData);
+    const [category, setCategory] = useState(FCategoryDataDiscipulado);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -48,7 +48,7 @@ const Discipulados = (props) => {
         setCategory(
             text
                 ? category.filter((item) => item.title.includes(text))
-                : FDiscipulados
+                : FCategoryDataDiscipulado
         );
     };
 

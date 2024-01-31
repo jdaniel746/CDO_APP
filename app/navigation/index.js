@@ -32,8 +32,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import PSelectAssignee from '../screens/PSelectAssignee';
 import AddNewPerson from '../screens/AddNewPerson';
 import PredicasDeGrupoSemanal from '../screens/PredicasDeGrupo';
-import PredicasGrupo from '../screens/PredicasDeGrupo';
-import Lista from '../screens/ListaDePredicas';
+import ListaDePredicas from '../screens/ListaDePredicas';
 import CustomDrawer from "./components/CustomDrawer";
 import Discipulados from '../screens/Discipulados';
 
@@ -81,15 +80,15 @@ const DrawerNavigator = () => {
       <Drawer.Screen name="Contact" component={PSelectAssignee} />
       <Drawer.Screen name="Preach of group" component={ PredicasDeGrupoSemanal} />
       <Drawer.Screen name="Discipulados" component={Discipulados} />
-
       <Drawer.Screen name="Assistance" component={Assistance} />
+ 
 
     </Drawer.Navigator>
   );
 };
 
 
-/*const Lista = () => {
+/*zconst Lista = () => {
   return (
     <ListarPredicasStack.Navigator
       initialRouteName={'PredicasDeGrupo'}

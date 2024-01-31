@@ -1,97 +1,250 @@
-import {
-    ProfileGridSmall,
-    SafeAreaView,
-    Text,
-    Header,
-    Icon,
-    ListSearchResultLabel,
-} from "@components";
-import { BaseStyle, useTheme, Images } from "@config";
-import { FHistory } from "@data";
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { FlatList, RefreshControl, View } from "react-native";
+import { Button, Header, Icon, Image, SafeAreaView, Text, TextInput, CardList } from '@components';
+import { BaseColor, BaseStyle, useTheme, Images } from '@config';
+// Load sample data
+import Spinner from 'react-native-loading-spinner-overlay';
+import React, { useEffect, useState } from 'react';
+import { Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+import styles from './styles';
+import { Formik } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { PersonActions } from '@actions';
+import { useDispatch, useSelector } from 'react-redux';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import * as yup from 'yup';
+import dayjs from 'dayjs';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { storage } from '@config/firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import Toast from 'react-native-toast-message';
+import UserIcon from '../../assets/images/user.png'
 
-const Lista = ({ navigation }) => {
-    const { t } = useTranslation();
-    const { colors } = useTheme();
-    const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
+const { fetchPerson, updatePerson } = PersonActions;
+//const minDate = dayjs().add(2, 'day').format('YYYY-MM-DD');
+const profileValidationSchema = yup.object().shape({
+  identify: yup.string().min(7, 'error.identify.min').max(8, 'error.identify.max'),
+  firstname: yup
+    .string()
+    .required('error.firstname.required')
+    .min(3, 'error.firstname.min')
+    .max(15, 'error.firstname.max'),
+  middlename: yup.string().min(3, 'error.middlename.min').max(20, 'error.middlename.max'),
+  lastname: yup
+    .string()
+    .required('error.lastname.required')
+    .min(3, 'error.lastname.min')
+    .max(15, 'error.lastname.max'),
+  surname: yup.string().min(3, 'error.surname.min').max(20, 'error.surname.max'),
+  address: yup.string().min(10, 'error.address.min').max(100, 'error.address.max'),
+  birthdate: yup.date(),
+  phone: yup.number().test('len', 'error.phone.length', (val) => val.toString().length === 7),
+  code: yup.number().test('len', 'error.code.length', (val) => val.toString().length === 3)
+});
 
-    useEffect(() => {
-        setTimeout(() => {
-            setLoading(false);
-        }, 1000);
-    }, []);
+const ProfileEdit = (props) => {
+  const { navigation } = props;
+  const auth = useSelector((state) => state.auth);
+  const user = auth.user;
+  const person = useSelector((state) => state.person);
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const [avatar, setAvatar] = useState(user.avatar);
+  const dispatch = useDispatch();
+  const [birthdate, setBirthdate] = useState();
+  const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const renderContent = () => {
-        return (
-            <View style={{ flex: 1, backgroundColor: "transparent" }}>
-                <Header
-                    title={t("transfer_history")}
-                    renderLeft={() => {
-                        return (
-                            <Icon
-                                name="angle-left"
-                                size={20}
-                                color={colors.text}
-                                enableRTL={true}
-                            />
-                        );
-                    }}
-                    renderRight={() => {
-                        return (
-                            <Text body1 lightPrimaryColor>
-                                {t("close")}
-                            </Text>
-                        );
-                    }}
-                    onPressLeft={() => navigation.goBack()}
-                    onPressRight={() => navigation.navigate("FHome")}
-                />
-                <View style={{ alignItems: "center" }}>
-                    <ProfileGridSmall
-                        image={Images.profile2}
-                        name="Seave Garret"
-                    />
-                </View>
-                <View style={{ flex: 1 }}>
-                    <FlatList
-                        contentContainerStyle={{ paddingHorizontal: 20 }}
-                        showsHorizontalScrollIndicator={false}
-                        showsVerticalScrollIndicator={true}
-                        refreshControl={
-                            <RefreshControl
-                                colors={[colors.primary]}
-                                tintColor={colors.primary}
-                                refreshing={refreshing}
-                                onRefresh={() => {}}
-                            />
-                        }
-                        data={FHistory}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item, index }) => (
-                            <ListSearchResultLabel
-                                title={item.title}
-                                textRight={item.textRight}
-                                textLeft={item.textLeft}
-                                onPress={() => navigation.navigate("FHistoryDetail")}
-                            />
-                        )}
-                    />
-                </View>
-            </View>
+  const showDateTimePicker = () => {
+    setIsDateTimePickerVisible(true);
+  };
+
+  const hideDateTimePicker = () => {
+    setIsDateTimePickerVisible(false);
+  };
+
+  const handleDatePicked = (date) => {
+    setBirthdate(dayjs(date).format('YYYY-MM-DD'));
+    hideDateTimePicker();
+  };
+
+  useEffect(() => {
+  }, [birthdate]);
+
+  useEffect(() => {
+    if (!person.person) {
+      try {
+        setIsLoading(true);
+        dispatch(
+          fetchPerson(user.id, (response) => {
+            console.log('response:' + JSON.stringify(response));
+            setIsLoading(false);
+            if(!response.success){
+              Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: response.message
+              });
+            }
+          })
         );
-    };
+      } catch (e) {
+        setIsLoading(false);
+        console.log('ERROR PERSONA :' + e);
+      }
+    }
+  }, [person]);
 
-    return (
-        <SafeAreaView
-            style={[BaseStyle.safeAreaView]}
-            edges={["right", "top", "left"]}
-        >
-            {renderContent()}
-        </SafeAreaView>
+  const handlerUpdate = (form) => {
+    setIsLoading(true);
+    form.id = user.id;
+    form.photo = avatar;
+    form.birthdate = birthdate;
+    dispatch(
+      updatePerson(form, (response) => {
+        console.log('responseU:' + JSON.stringify(response));
+        setIsLoading(false);
+        if (response.success) {
+          Toast.show({
+            type: 'success',
+            text1: 'Exito',
+            text2: ' Actualizacion del perfil exitosa!'
+          });
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'No se pudo actualizar tu perfil!'
+          });
+        }
+      })
     );
+  };
+
+  const ImageChoiceAndUpload = async () => {
+    try {
+      if (Platform.OS === 'ios') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Permission is required for use.');
+          return;
+        }
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: false,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsMultipleSelection: false
+      });
+      //AQUI ESTA//
+      if (!result.canceled) {
+        let actions = [];
+        actions.push({ resize: { width: 300 } });
+        const manipulatorResult = await ImageManipulator.manipulateAsync(
+          result.assets[0].uri,
+          actions,
+          {
+            compress: 0.4
+          }
+        );
+        const localUri = await fetch(manipulatorResult.uri);
+        const localBlob = await localUri.blob();
+        const filename = user.id;
+        const storageRef = ref(storage, `perfil/${user.id}/` + filename);
+        const uploadTask = uploadBytesResumable(storageRef, localBlob);
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+           // setProgress(parseInt(progress) + '%');
+          },
+          (error) => {
+            console.log(error);
+            alert('Upload failed.');
+          },
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              //setProgress('');
+              setAvatar(downloadURL);
+            });
+          }
+        );
+      }
+    } catch (e) {
+      console.log('error', e.message);
+    }
+  };
+
+  return (
+    <>
+      <Spinner visible={isLoading} />
+      {person.person && (
+        <Formik
+          initialValues={{
+            identify: person.person?.identify,
+            firstname: person.person?.firstname,
+            middlename: person.person?.middlename,
+            lastname: person.person?.lastname,
+            surname: person.person?.surname,
+            address: person.person?.address,
+            birthdate: person.person?.birthdate ?? birthdate,
+            phone: person.person?.phone,
+            code: person.person?.code
+          }}
+          validationSchema={profileValidationSchema}
+          onSubmit={(values) => {
+            handlerUpdate(values);
+          }}>
+          {({ handleSubmit, setFieldValue, handleChange, handleBlur, values, errors }) => (
+            <SafeAreaView style={BaseStyle.safeAreaView} edges={['right', 'top', 'left']}>
+              <DateTimePicker
+                mode="date"
+                isVisible={isDateTimePickerVisible}
+                onConfirm={handleDatePicked}
+                onCancel={hideDateTimePicker}
+              />
+              <Header
+                title={t('edit_profile')}
+                renderLeft={() => {
+                  return (
+                    <Icon name="angle-left" size={20} color={colors.primary} enableRTL={true} />
+                  );
+                }}
+                onPressLeft={() => {
+                  navigation.goBack();
+                }}
+                onPressRight={() => {}}
+              />
+              <ScrollView>
+                <View style={styles.contain}>
+                  {/*<View><Image source={image} style={styles.thumb} /></View>*/}
+                  
+                  <CardList
+                    style={{}}
+                    image={{ uri: avatar }}
+                    title="Pastor(a)"
+                    subtitle="Description new"
+                    rate={4.5}
+                    onPress={ImageChoiceAndUpload}
+                    onPressTag={() => {}}
+                  />
+                 
+                 <Text body2>
+                    
+
+                        Nulla quis lorem ut libero malesuada feugiat. Donec
+                        rutrum congue leo eget malesuada. Nulla quis lorem ut
+                        libero malesuada feugiat. Vestibulum ante ipsum primis
+                        in faucibus orci luctus et ultrices posuere cubilia
+                        Curae
+                    </Text>
+                </View>
+              </ScrollView>
+              
+            </SafeAreaView>
+          )}
+        </Formik>
+      )}
+    </>
+  );
 };
 
-export default Lista;
+export default ProfileEdit;

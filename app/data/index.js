@@ -1,3 +1,5 @@
+import { FDiscipulados } from './fdiscipuladosAudio';
+
 // export { LanguageData } from './language';
 export { UserData } from './user';
 // export { MessagesData } from './messages';
@@ -56,7 +58,7 @@ export { FFriends } from './fFriend';
 export { PProjectHome } from './pHome';
 export { FCategoryData } from './fCategory';
 export { FHistory } from './fHistory';
-export { FDiscipulados } from './fdiscipuladosAudios';
+export  { FCategoryDataDiscipulado } from './fdiscipuladosAudio';
 
 
 // export { PProject, PProjectType, PProjectAction } from './pProject';

@@ -9,14 +9,15 @@ import {
 } from "@components";
 import { CardList } from "../components";
 
-export const FDiscipulados = [
-       
+export const FCategoryDataDiscipulado = [
+    
     {
         id: "4",
-        screen: "AddNewPerson",
-        icon: "grip-lines",
+        screen: "",
+        icon: "play",
         title: "SEMANA 1",
-        subtitle: "10/01/2023",
+        subtitle: "10/01/2024",
+        
     },
     
 
@@ -24,39 +25,9 @@ export const FDiscipulados = [
     {
         id: "5",
         screen: "",
-        icon: "grip-lines",
+        icon: "play",
         title: "SEMANA 2",
-        subtitle: "Los desafios de Dios ",
+        subtitle: "18/01/2024",
     },
-    {
-        id: "6",
-        screen: "",
-        icon: "grip-lines",
-        title: "SEMANA 3",
-        subtitle: "Dios esta obrando ",
-    },
-    {
-        id: "1",
-        screen: "FBank",
-        icon: "grip-lines",
-        title: "SEMANA 4",
-        subtitle: "Espera en silencio",
-        
-    },
-    {
-        id: "2",
-        screen: "",
-        title: "SEMANA 5",
-        icon: "grip-lines",
-        alert: "25/02/2023",
-        subtitle: "Dios es fiel",
-       
-    },
-    {
-        id: "3",
-        screen: "", 
-        title: "SEMANA 6",
-        icon: "grip-lines",
-        subtitle: "Caracter",
-    },
+
 ];
