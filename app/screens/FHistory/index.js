@@ -75,7 +75,7 @@ const FHistoryScreen = ({ navigation }) => {
                                 title={item.title}
                                 textRight={item.textRight}
                                 textLeft={item.textLeft}
-                                onPress={() => navigation.navigate("FHistoryDetail")}
+                                onPress={() => navigation.navigate("AddNewPerson")}
                             />
                         )}
                     />

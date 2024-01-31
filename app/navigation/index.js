@@ -32,8 +32,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import PSelectAssignee from '../screens/PSelectAssignee';
 import AddNewPerson from '../screens/AddNewPerson';
 import PredicasDeGrupoSemanal from '../screens/PredicasDeGrupo';
+import PredicasGrupo from '../screens/PredicasDeGrupo';
 import Lista from '../screens/ListaDePredicas';
-
 import CustomDrawer from "./components/CustomDrawer";
 
 
@@ -43,7 +43,7 @@ const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
-const PredicasDeGrupoSemanalStack = createStackNavigator();
+const ListarPredicasStack = createDrawerNavigator();
 
 
 const AuthScreens = () => {
@@ -84,6 +84,22 @@ const DrawerNavigator = () => {
     </Drawer.Navigator>
   );
 };
+
+
+/*const Lista = () => {
+  return (
+    <ListarPredicasStack.Navigator
+      initialRouteName={'PredicasDeGrupo'}
+      screenOptions={{
+        headerShown: false
+      }}>
+      <SettingsStack.Screen key="PredicasDeGrupo" name="PredicasDeGrupo" component={PredicasDeGrupoSemanal} />
+      <SettingsStack.Screen key="Lista" name="Lista" component={Lista} />
+    </ListarPredicasStack.Navigator>
+  );
+};*/
+
+
 
 const Assistance = () => {
   return (
