@@ -56,6 +56,7 @@ export { FFriends } from './fFriend';
 export { PProjectHome } from './pHome';
 export { FCategoryData } from './fCategory';
 export { FHistory } from './fHistory';
+export { FDiscipulados } from './fdiscipuladosAudios';
 
 
 // export { PProject, PProjectType, PProjectAction } from './pProject';

@@ -35,6 +35,7 @@ import PredicasDeGrupoSemanal from '../screens/PredicasDeGrupo';
 import PredicasGrupo from '../screens/PredicasDeGrupo';
 import Lista from '../screens/ListaDePredicas';
 import CustomDrawer from "./components/CustomDrawer";
+import Discipulados from '../screens/Discipulados';
 
 
 const SettingsStack = createStackNavigator();
@@ -79,6 +80,8 @@ const DrawerNavigator = () => {
       <Drawer.Screen name="Home" component={MainScreens} />
       <Drawer.Screen name="Contact" component={PSelectAssignee} />
       <Drawer.Screen name="Preach of group" component={ PredicasDeGrupoSemanal} />
+      <Drawer.Screen name="Discipulados" component={Discipulados} />
+
       <Drawer.Screen name="Assistance" component={Assistance} />
 
     </Drawer.Navigator>
