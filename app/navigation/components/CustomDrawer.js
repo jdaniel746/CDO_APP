@@ -14,6 +14,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { AuthActions } from '@actions';
+import { initReactI18next, useTranslation } from 'react-i18next';
 
 import { UserData } from '@data';
 import React, { useState } from 'react';
@@ -21,6 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const { logout } = AuthActions;
 
 const CustomDrawer = props => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [userData] = useState(UserData[0]);
@@ -96,7 +98,8 @@ const CustomDrawer = props => {
                 fontFamily: 'Roboto-Medium',
                 marginLeft: 5,
               }}>
-              Sign Out
+              
+              {t("Sign Out")}
             </Text>
           </View>
         </TouchableOpacity>

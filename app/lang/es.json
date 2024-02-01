@@ -348,6 +348,10 @@
 	"Preach": "Predica",
 	"Title": "Titulo",
 	"Subtitle": "Subtitulo",
+	"Contact": "Contactos",
+	"Discipulado": "Discipulados",
+	"Assistance": "Asistencia",
+	"Sign Out": "Cerrar Seccion",
 
 
 	"error.email.required": "Debe ingresar un correo electronico",

@@ -37,6 +37,7 @@ import CustomDrawer from "./components/CustomDrawer";
 import Discipulados from '../screens/Discipulados';
 
 
+
 const SettingsStack = createStackNavigator();
 const AssistanceStack = createStackNavigator();
 const AuthStack = createStackNavigator();
@@ -44,6 +45,7 @@ const MainStack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const ListarPredicasStack = createDrawerNavigator();
+
 
 
 const AuthScreens = () => {
@@ -60,7 +62,10 @@ const AuthScreens = () => {
   );
 };
 
+
 const DrawerNavigator = () => {
+  const { t } = useTranslation();
+  
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawer {...props} />}
@@ -73,14 +78,16 @@ const DrawerNavigator = () => {
           marginLeft: 0,
           fontFamily: 'Roboto-Medium',
           fontSize: 15,
+         
         },
       }}
+      
     >
-      <Drawer.Screen name="Home" component={MainScreens} />
-      <Drawer.Screen name="Contact" component={PSelectAssignee} />
-      <Drawer.Screen name="Preach of group" component={ PredicasDeGrupoSemanal} />
-      <Drawer.Screen name="Discipulados" component={Discipulados} />
-      <Drawer.Screen name="Assistance" component={Assistance} />
+      <Drawer.Screen name={t("Home")} component={MainScreens} />
+      <Drawer.Screen name={t("Contact")} component={PSelectAssignee} />
+      <Drawer.Screen name={t("Preach of group")} component={PredicasDeGrupoSemanal} />
+      <Drawer.Screen name={t("Discipulados")} component={Discipulados} />
+      <Drawer.Screen name={t("Assistance")} component={Assistance} />
       <Drawer.Screen name="Lista" component={ListaDePredicas} />
  
 
@@ -93,7 +100,9 @@ const DrawerNavigator = () => {
 
 
 
+
 const Assistance = () => {
+  
   return (
     <AssistanceStack.Navigator
       initialRouteName={'Assistance'}
@@ -186,6 +195,7 @@ const Navigator = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const navigationRef = useRef(null);
+  
 
   useEffect(() => {
     console.log('STATE NAVIGATION: ' + JSON.stringify(auth));

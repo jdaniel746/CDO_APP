@@ -13,7 +13,7 @@ export const FCategoryData = [
        
     {
         id: "4",
-        screen: "PTaskView",
+        screen: "Lista",
         icon: "grip-lines",
         title: "SEMANA 1",
         subtitle: "El amor de Dios",
