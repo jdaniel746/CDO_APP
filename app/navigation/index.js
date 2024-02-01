@@ -81,6 +81,7 @@ const DrawerNavigator = () => {
       <Drawer.Screen name="Preach of group" component={ PredicasDeGrupoSemanal} />
       <Drawer.Screen name="Discipulados" component={Discipulados} />
       <Drawer.Screen name="Assistance" component={Assistance} />
+      <Drawer.Screen name="Lista" component={ListaDePredicas} />
  
 
     </Drawer.Navigator>
@@ -88,18 +89,7 @@ const DrawerNavigator = () => {
 };
 
 
-/*zconst Lista = () => {
-  return (
-    <ListarPredicasStack.Navigator
-      initialRouteName={'PredicasDeGrupo'}
-      screenOptions={{
-        headerShown: false
-      }}>
-      <SettingsStack.Screen key="PredicasDeGrupo" name="PredicasDeGrupo" component={PredicasDeGrupoSemanal} />
-      <SettingsStack.Screen key="Lista" name="Lista" component={Lista} />
-    </ListarPredicasStack.Navigator>
-  );
-};*/
+
 
 
 

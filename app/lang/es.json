@@ -343,6 +343,12 @@
 	"task_view": "Task View",
 	"all": "Todos",
 	"Preach of group": "Predicas de grupo",
+	"Home": "Inicio",
+	"Introduction": "Introduccion",
+	"Preach": "Predica",
+	"Title": "Titulo",
+	"Subtitle": "Subtitulo",
+
 
 	"error.email.required": "Debe ingresar un correo electronico",
 	"error.email.invalid": "Ingrese un correo valido",
