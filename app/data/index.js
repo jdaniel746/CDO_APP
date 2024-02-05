@@ -1,3 +1,5 @@
+import { FDiscipulados } from './fdiscipuladosAudio';
+
 // export { LanguageData } from './language';
 export { UserData } from './user';
 // export { MessagesData } from './messages';
@@ -54,6 +56,11 @@ export { FFriends } from './fFriend';
 //export { MaziListApp } from './maziHome';
 // export { FCategoryData } from './fCategory';
 export { PProjectHome } from './pHome';
+export { FCategoryData } from './fCategory';
+export { FHistory } from './fHistory';
+export  { FCategoryDataDiscipulado } from './fdiscipuladosAudio';
+
+
 // export { PProject, PProjectType, PProjectAction } from './pProject';
 export { PTeamMembersInCreate, PAttachments, GroupLeaders } from './pProjectCreate';
 // export { PTaskStatus, PTaskType, PTaskPriority } from './pTaskCreate';
