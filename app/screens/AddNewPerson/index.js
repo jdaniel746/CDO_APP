@@ -21,6 +21,7 @@ import UserIcon from '../../assets/images/user.png'
 import { AuthActions } from '@actions';
 //import * as ImagePicker from 'expo-image-picker';
 //import * as ImageManipulator from 'expo-image-manipulator';
+const { register } = AuthActions;
 
 
 const { fetchPerson, updatePerson } = PersonActions;
@@ -38,14 +39,13 @@ const newValidationSchema = yup.object().shape({
     .required('error.lastname.required')
     .min(3, 'error.lastname.min')
     .max(15, 'error.lastname.max'),
-  surname: yup.string().min(3, 'error.surname.min').max(20, 'error.surname.max'),
   address: yup.string().min(10, 'error.address.min').max(100, 'error.address.max'),
   birthdate: yup.date(),
   phone: yup.number().test('len', 'error.phone.length', (val) => val.toString().length === 7),
   local: yup.number().test('len', 'error.phone.length', (val) => val.toString().length === 7),
   code: yup.number().test('len', 'error.code.length', (val) => val.toString().length === 3),
   code_local: yup.number().test('len', 'error.code.length', (val) => val.toString().length === 3),
-  invitadoPor: yup
+  Invited_by: yup
     .string()
     .required('error.invitadoPor.required')
     .min(3, 'error.invitadoPor.min')
@@ -79,7 +79,7 @@ const AddNew = (props) => {
 
   const onAddNew = (values) => {
     if (
-      values.identify !== '' &&
+      values.identify !== '' ,
       values.firstname !== '' &&
       values.lastname !== '' &&
       values.address !== '' &&
@@ -89,7 +89,7 @@ const AddNew = (props) => {
       values.code_local!== '' &&
       values.code_local!== '' &&
       values.local!== '' &&
-      values.invitadoPor !== ''
+      values.Invited_by !== ''
 
     ) {
       setLoading(true);
@@ -147,7 +147,7 @@ const AddNew = (props) => {
                 onCancel={hideDateTimePicker}
               />
               <Header
-                title={t('Nuevo Convertido')}
+                title={t('Add_Person')}
                 renderLeft={() => {
                   return (
                     <Icon name="angle-left" size={20} color={colors.primary} enableRTL={true} />
@@ -289,7 +289,7 @@ const AddNew = (props) => {
 
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
-                      {t('Telefono local')}
+                      {t('phone_local')}
                     </Text>
                   </View>
                   <View style={{ flexDirection: 'row', marginTop: 10 }}>
@@ -307,7 +307,7 @@ const AddNew = (props) => {
                     <View style={{ flex: 7, marginLeft: 10 }}>
                       <TextInput
                         onChangeText={handleChange('local')}
-                        placeholder={t('local_number')}
+                        placeholder={t('code_local')}
                         keyboardType="numeric"
                         name="local"
                         onBlur={handleBlur('local')}
@@ -320,21 +320,22 @@ const AddNew = (props) => {
 
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
-                      {t('¿Quien te invito?')}
+                      {t('Invited_by')}
                     </Text>
                   </View>
                   <TextInput
                     style={BaseStyle.textInput}
-                    onChangeText={handleChange('invitadoPor')}
-                    name="invitadoPor"
-                    onBlur={handleBlur('Quien te invito')}
-                    errors={errors.invitadoPor}
+                    onChangeText={handleChange('Invited_by')}
+                    name="Invited_by"
+                    onBlur={handleBlur('Invited_by')}
+                    errors={errors.Invited_by}
                     autoCorrect={false}
-                    placeholder={t('input_invitadoPor')}
+                    multiline={true}
+                    placeholder={t('Invited_by')}
                     placeholderTextColor={BaseColor.grayColor}
-                    value={values.invitadoPor}
+                    value={values.Invited_by}
                     selectionColor={colors.primary}
-                  />           
+                  />
                   
 
                   

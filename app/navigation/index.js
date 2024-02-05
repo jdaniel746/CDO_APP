@@ -31,8 +31,12 @@ import SelectFontOption from '../screens/SelectFontOption';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import PSelectAssignee from '../screens/PSelectAssignee';
 import AddNewPerson from '../screens/AddNewPerson';
-import FCategory from '../screens/FCategory';
+import PredicasDeGrupoSemanal from '../screens/PredicasDeGrupo';
+import ListaDePredicas from '../screens/ListaDePredicas';
 import CustomDrawer from "./components/CustomDrawer";
+import Discipulados from '../screens/Discipulados';
+
+
 
 const SettingsStack = createStackNavigator();
 const AssistanceStack = createStackNavigator();
@@ -40,6 +44,9 @@ const AuthStack = createStackNavigator();
 const MainStack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+const ListarPredicasStack = createDrawerNavigator();
+
+
 
 const AuthScreens = () => {
   const intro = useSelector(getInto);
@@ -55,29 +62,49 @@ const AuthScreens = () => {
   );
 };
 
+
 const DrawerNavigator = () => {
+  const { t } = useTranslation();
+  
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawer {...props} />}
       screenOptions={{
         headerShown: false,
-        drawerActiveBackgroundColor: '#aa18ea',
+        drawerActiveBackgroundColor: '#da0048',
         drawerActiveTintColor: '#fff',
         drawerInactiveTintColor: '#333',
         drawerLabelStyle: {
           marginLeft: 0,
           fontFamily: 'Roboto-Medium',
           fontSize: 15,
+         
         },
       }}
+      
     >
-      <Drawer.Screen name="Home" component={MainScreens} />
-      <Drawer.Screen name="Contact" component={PSelectAssignee} />
+      <Drawer.Screen name={t("Home")} component={MainScreens} />
+      <Drawer.Screen name={t("Contact")} component={PSelectAssignee} />
+      <Drawer.Screen name={t("Preach of group")} component={PredicasDeGrupoSemanal} />
+      <Drawer.Screen name={t("Discipulados")} component={Discipulados} />
+      <Drawer.Screen name={t("Assistance")} component={Assistance} />
+      <Drawer.Screen name="Lista" component={ListaDePredicas} />
+ 
+
     </Drawer.Navigator>
   );
 };
 
+
+
+
+
+
+
+
+
 const Assistance = () => {
+  
   return (
     <AssistanceStack.Navigator
       initialRouteName={'Assistance'}
@@ -87,10 +114,13 @@ const Assistance = () => {
       <SettingsStack.Screen key="Assistance" name="Assistance" component={AssistanceGroup} />
       <SettingsStack.Screen key="PeopleSelect" name="PeopleSelect" component={PSelectAssignee} />
       <SettingsStack.Screen key="AddNewPerson" name="AddNewPerson" component={AddNewPerson} />
-      <SettingsStack.Screen key="FCategory" name="FCategory" component={FCategory} />
+      
+      
+      
     </AssistanceStack.Navigator>
   );
 };
+
 
 const ProfileSettings = () => {
   return (
@@ -147,15 +177,6 @@ const MainScreens = () => {
         }}
       />
       <BottomTab.Screen
-        key="AssistanceGroup"
-        name="AssistanceGroup"
-        component={Assistance}
-        options={{
-          tabBarIcon: ({ color }) => tabBarIcon({ color, name: 'clipboard-check' }),
-          title: t('Asistencia')
-        }}
-      />
-      <BottomTab.Screen
         key="ProfileSettings"
         name="ProfileSettings"
         component={ProfileSettings}
@@ -176,6 +197,7 @@ const Navigator = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const navigationRef = useRef(null);
+  
 
   useEffect(() => {
     console.log('STATE NAVIGATION: ' + JSON.stringify(auth));
