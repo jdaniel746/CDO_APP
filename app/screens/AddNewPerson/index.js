@@ -21,6 +21,7 @@ import UserIcon from '../../assets/images/user.png'
 import { AuthActions } from '@actions';
 //import * as ImagePicker from 'expo-image-picker';
 //import * as ImageManipulator from 'expo-image-manipulator';
+const { register } = AuthActions;
 
 
 const { fetchPerson, updatePerson } = PersonActions;
@@ -78,7 +79,7 @@ const AddNew = (props) => {
 
   const onAddNew = (values) => {
     if (
-      values.identify !== '' &&
+      values.identify !== '' ,
       values.firstname !== '' &&
       values.lastname !== '' &&
       values.address !== '' &&
