@@ -15,7 +15,6 @@ const ListaDePredicas = (props) => {
     const { colors } = useTheme();
     const { t } = useTranslation();
     const db = getFirestore();
-    const week = "Semana 1"
     const dbRef = collection(db, "pitch");
 
     const [valores, setValores] = useState([]);
