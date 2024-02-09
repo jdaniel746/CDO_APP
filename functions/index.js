@@ -7,13 +7,12 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-const {onRequest} = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
+//const {onSchedule} = require("firebase-functions/v2/scheduler");
 const functions = require("firebase-functions")
 const express = require("express")
 const admin = require("firebase-admin");
 const app = express()
-const  https = require("firebase-functions");
+//const { createPerson } = require('./graphql/resolvers')
 
 const  serviceAccount = require("./permisions.json");
 
@@ -21,12 +20,13 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 app.use(require("./graphql/server"))
-//const api = https.onRequest(gqlServer());
-//app.use(require('./routes/assistance.routes'));
-//export { api }
+//app.use(createPerson)
+/*exports.findPeopleOnAlert = onSchedule("* * * * *", async (event) => {
+  logger.log("User cleanup finished");
+  console.log("cron " + JSON.stringify(event))
+})*/
+exports.helloEveryMinute = functions.pubsub.schedule("*/1 * * * *").onRun((context) => {
+  console.log("cron " + JSON.stringify(context))
+  return null;
+})
 exports.app = functions.https.onRequest(app);
-
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
