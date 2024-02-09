@@ -4,7 +4,7 @@ const schema = gql`
 
   scalar Date
 
-  type Grupo {
+  type Group {
     address: String
     id: String!
     leaders: String
@@ -13,11 +13,11 @@ const schema = gql`
     photo: String
     red: String
     status: String
-    persons: [String]
-    dayofweek: String
+    people: [String]
+    day_of_week: String
   }
   
-  type Persona {
+  type Person {
     id: String!
     firstname: String
     middlename: String
@@ -27,29 +27,32 @@ const schema = gql`
     birthdate: String
     identify: String
     photo: String
-    localcode: String
-    localphone: String
-    celcode: String
-    celphone: String
-    invitedby: String
-    newingroup: Boolean
+    local_code: String
+    local_phone: String
+    cel_code: String
+    cel_phone: String
+    invited_by: String
+    new_in_group: Boolean
+    weeks_group: [Int]
+    weeks_church: [Int]
+    registered_by: String
   }
   
-  input InPersona {
+  input InPerson {
     firstname: String!
     middlename: String
-    lastname: String
+    lastname: String!
     surname: String
     address: String
     birthdate: String
     identify: String
     photo: String
-    localcode: String
-    localphone: String
-    celcode: String
-    celphone: String
-    invitedby: String
-    newingroup: Boolean
+    local_code: String
+    local_phone: String
+    cel_code: String
+    cel_phone: String
+    invited_by: String
+    new_in_group: Boolean!
     
   }
   
@@ -57,77 +60,91 @@ const schema = gql`
     id: String!
     name: String!
     description: String
-    conditionweek: Int
+    condition_week: Int
   }
   
-  type StatusPersona {
-    id_persona: String!
+  type StatusPerson {
+    id_person: String!
     id_status: String!
+    date: Date!
+    week: Int!
+    counter: Int!
+  }
+  
+  type Pitch {
+    id: String
+    title: String!
+    subtitle: String
+    intro: String
+    content1: String
+    content2: String
+    content3: String
+    finality: String
+    offer: String
+    intercession: String
+    week: Int
+    dates: Date
+  }
+  
+  input InPitch {
+    title: String!
+    subtitle: String
+    intro: String
+    content1: String
+    content2: String
+    content3: String
+    finality: String
+    offer: String
+    intercession: String
+    week: Int
+    dates: Date
+  }
+  
+  type Assistance {
+    id: String
+    created_date: Date
+    offer_bs: Float
+    offer_dol: Float
+    photo: String
+    comment: String
+    week: Int
+    group: String
+    event_type: String!
+    people: [String!]!
+    new: [String]
+    affirmed: [String]
+    wined: [String]
+    consolidated: [String]
+    adl: [String]
+    alert: [String]
+    leaders: [String]
+    cod7: [String]
+    others: [String]
+  }
+  
+   input InAssistance {
+    id: String
+    offer_bs: Float
+    offer_dol: Float
+    photo: String
+    comment: String
+    week: Int
+    group: String
+    event_type: String!
     date: Date
-  }
-  
-  type Predica {
-    id: String
-    title: String!
-    subtitle: String
-    intro: String
-    content1: String
-    content2: String
-    content3: String
-    finality: String
-    offer: String
-    intercession: String
-    week: Int
-    dates: Date
-  }
-  
-  input InPredica {
-    title: String!
-    subtitle: String
-    intro: String
-    content1: String
-    content2: String
-    content3: String
-    finality: String
-    offer: String
-    intercession: String
-    week: Int
-    dates: Date
-  }
-  
-  type Asistencia {
-    id: String
-    created: Date
-    offerbs: Float
-    offerdol: Float
-    photo: String
-    comment: String
-    week: Int
-    group: String
-    eventtype: String!
-  }
-  
-   input InAsistencia {
-    id: String
-    offerbs: Float
-    offerdol: Float
-    photo: String
-    comment: String
-    week: Int
-    group: String
-    eventtype: String!
     people: [String!]
-    
   }
   
   type Mutation {
-    addPredica(pitch: InPredica!): String
-    addPersona(persona: InPersona!): String
+    addPitch(pitch: InPitch!): String
+    addPerson(person: InPerson!): String
+    addAssistance(assistance: InAssistance!): String
   }
   
   type Query {
-    grupos(id: String): [Grupo]
-    persona(id: String): Persona
+    groups(id: String): [Group]
+    person(id: String): Person
+    peopleByGroupId(id: String): [Person]
   }
     
 `
