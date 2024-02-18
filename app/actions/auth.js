@@ -4,6 +4,8 @@ import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import supabase from "../config/supabase";
+import { useEffect } from "react";
 
 const onLoginSuccess = (data) => {
   return {
@@ -24,11 +26,10 @@ const onRegister = () => {
   };
 };
 
-
 export const login = (login, callback) => async (dispatch) => {
   //call api and dispatch action case
   try {
-    const response = await signInWithEmailAndPassword(auth, login.user, login.password);
+    /*const response = await signInWithEmailAndPassword(auth, login.user, login.password);
     const { uid } = response.user;
     console.log(response);
     const usersRef = doc(firestore, 'users', uid);
@@ -52,7 +53,36 @@ export const login = (login, callback) => async (dispatch) => {
         AsyncStorage.setItem('user', JSON.stringify(data.user));
         callback({ success: true });
       }
-    });
+    });*/
+    const {user, session, error} = await supabase.auth.signInWithPassword({
+      email: login.user,
+      password: login.password
+    })
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log("ONAUTH")
+      console.log(event)
+      console.log("----------")
+      console.log( session)
+      if(session) {
+        let data = {
+          user: { lang: 'es',
+          email: login.user,
+          id: session.user.id
+          }
+        };
+        //AsyncStorage.setItem('user', JSON.stringify(session.user));
+        AsyncStorage.setItem('token', JSON.stringify(session.access_token));
+        dispatch(onLoginSuccess(data));
+      }
+    })
+    if (typeof callback === 'function' && !error) {
+      console.log("SETTING CALLBACK TRUE")
+      //AsyncStorage.setItem('user', JSON.stringify(user));
+      callback({ success: true });
+    } else {
+      callback({ success: false });
+    }
   } catch (e) {
     callback({ success: false });
     console.log('ERROR: ' + e);
@@ -62,7 +92,13 @@ export const login = (login, callback) => async (dispatch) => {
 export const register = (user, callback) => async (dispatch) => {
   try {
     console.log("values:"+JSON.stringify(user))
-    const response = await createUserWithEmailAndPassword(auth, user.email, user.password);
+    let { data, error } = await supabase.auth.signUp({
+      email: user.email,
+      password: user.password
+    })
+    console.log("register user "+ JSON.stringify(data))
+    console.log("register user Error "+JSON.stringify(error))
+   /* const response = await createUserWithEmailAndPassword(auth, user.email, user.password);
     console.log("response "+response)
     const { uid } = response.user;
     const user_ = {
@@ -83,28 +119,13 @@ export const register = (user, callback) => async (dispatch) => {
       invitedBy: ''
     };
 
-    const New_ = {
-      address: '' ,
-      lastname: '',
-      birthdate: '',
-      code: '',
-      code_local: '',
-      firstname: '',
-      identify: '',
-      lastname: '',
-      local: '',
-      phone: ''
-      
-    };
 
     const personRef = doc(firestore, 'persona', uid);
     await setDoc(personRef, person_);
     const usersRef = doc(firestore, 'users', uid);
-    await setDoc(usersRef, user_);
-    const NewRef = doc(firestore, 'New', uid);
-    await setDoc(NewRef, New_);
+    await setDoc(usersRef, user_);*/
 
-    dispatch(onRegister(user_));
+    dispatch(onRegister(data));
     if (typeof callback === 'function') {
       callback({ success: true });
     }
@@ -132,6 +153,7 @@ export const resetPassword = (email, callback) => async(dispatch) => {
 };
 
 export const logout = (callback) => (dispatch) => {
+  supabase.auth.signOut()
   dispatch(onLogOut());
   if (typeof callback === 'function') {
     AsyncStorage.clear();

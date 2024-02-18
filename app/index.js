@@ -3,11 +3,13 @@ import { persistor, store } from 'app/store';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+//import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Utils from '@utils';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+//import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import App from './navigation';
+import { Provider as SupabaseProvider} from 'react-supabase'
+import supabase from 'app/config/supabase'
 Utils.setupLayoutAnimation();
 LogBox.ignoreAllLogs(true);
 
@@ -61,7 +63,9 @@ const Mazi = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <App />
+        <SupabaseProvider value={supabase}>
+          <App />
+        </SupabaseProvider>
         <Toast config={toastConfig} />
       </PersistGate>
     </Provider>

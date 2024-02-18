@@ -21,27 +21,9 @@ import React, { useState, Fragment, useEffect } from 'react';
 import Avatars from '../../components/Avatars';
 import { useSelector } from 'react-redux';
 import DateTimePicker from "react-native-modal-datetime-picker";
+import supabase from "../../config/supabase";
+import { useRealtime } from "react-supabase";
 
-
-const gruposDelUsuario = [
-  {
-    value: 'most_helpful',
-    text: 'Grupo 4.1'
-  },
-  {
-    value: 'most_favourable',
-    text: 'Grupo 4.1.1.1'
-  },
-  {
-    value: 'most_crictical',
-    text: 'Grupo 4.1.2',
-  },
-
-  { 
-    value: 'most_recent',
-    text: 'Grupo 4.1.3',
-  }
-];
 
 const eventList = [
   {
@@ -68,23 +50,50 @@ const AssistanceGroup = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const date = dayjs(new Date()).format('DD-MMM-YYYY');
-  const [grupo, setGrupo] = useState(gruposDelUsuario[0]);
-  const [event, setEvent] = useState(eventList[0]);
+  const [grupo, setGrupo] = useState();
+  const [event, setEvent] = useState();
   const [assistants, setAssistants] = useState([]);
-  const store = useSelector((state) => state.members);
+  const auth = useSelector((state) => state.auth);
   const [offerUSD, setOfferUSD] = useState('0');
   const [offerVES, setOfferVES] = useState('0');
   const [comment, setComment] = useState('');
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [dateAssistance, setDateAssistance] = useState(date)
-
+  const [groups, setGroups] = useState([])
+  const [eventList, setEventList] = useState([])
+  //const [result, reexecute] = useRealtime('task')
+  //const  {data: groups, error, fetching } = result;
   useEffect(() => {
-    if (store.members && Object.keys(store.members).length > 0) {
-      console.log('membersA: ' + JSON.stringify(store.members));
-      //const ids = store.members.map((item) => item.id);
-      setAssistants(store.members.filter((item) => item.isSelect));
+    async function fetch() {
+      let { data: groups, error } = await supabase
+        .from('groups')
+        .select(' id, name')
+        .contains('leaders', [auth.user.id])
+      if(groups.length > 0){
+        setGroups(groups.map((gr) => {
+          let temp = {}
+          temp.value = gr.id
+          temp.text = gr.name
+          return temp
+        }))
+      }
+      let { data: events, error2 } = await supabase
+        .from('events')
+        .select(' id, name')
+console.log("EVENTS"+JSON.stringify(events))
+      if(events.length > 0) {
+        setEventList(events.map((e) => {
+          let temp = {}
+          temp.value = e.id.toString()
+          temp.text = e.name
+          return temp
+        }))
+      }
+
     }
-  }, [store.members]);
+    fetch()
+  }, []);
+
 
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
@@ -142,7 +151,7 @@ const AssistanceGroup = () => {
           <View style={styles.specifications}>
             <ProductSpecGrid style={{ flex: 1 }} title={date} description={t('assistance_date')} renderTitle={renderDate} />
             <SelectModal
-              options={gruposDelUsuario}
+              options={groups}
               selected={grupo}
               onApply={(item) => setGrupo(item)}
               label="group"
