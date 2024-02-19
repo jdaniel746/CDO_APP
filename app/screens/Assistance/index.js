@@ -89,10 +89,14 @@ console.log("EVENTS"+JSON.stringify(events))
           return temp
         }))
       }
-
+      let {data: leaders, errors3} = await supabase.from('person').select('id, firstname, lastname, photo')
+      if(leaders.length > 0){
+        console.log(leaders)
+      }
     }
     fetch()
   }, []);
+
 
 
   const showDateTimePicker = () => {

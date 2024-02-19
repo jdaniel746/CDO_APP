@@ -27,33 +27,7 @@ const onRegister = () => {
 };
 
 export const login = (login, callback) => async (dispatch) => {
-  //call api and dispatch action case
   try {
-    /*const response = await signInWithEmailAndPassword(auth, login.user, login.password);
-    const { uid } = response.user;
-    console.log(response);
-    const usersRef = doc(firestore, 'users', uid);
-    const firestoreDocument = await getDoc(usersRef);
-
-    if (!firestoreDocument.exists) {
-      alert('User does not exist anymore.');
-    }
-
-    onSnapshot(usersRef, (querySnapshot) => {
-      const userDataNew = querySnapshot.data();
-      console.log(userDataNew);
-
-      let data = {
-        user: { lang: 'es', ...userDataNew }
-      };
-
-      dispatch(onLoginSuccess(data));
-      if (typeof callback === 'function') {
-        console.log("SETTING CALLBACK TRUE")
-        AsyncStorage.setItem('user', JSON.stringify(data.user));
-        callback({ success: true });
-      }
-    });*/
     const {user, session, error} = await supabase.auth.signInWithPassword({
       email: login.user,
       password: login.password
@@ -66,23 +40,27 @@ export const login = (login, callback) => async (dispatch) => {
       console.log( session)
       if(session) {
         let data = {
-          user: { lang: 'es',
-          email: login.user,
-          id: session.user.id
+          user: {
+            lang: 'es',
+            email: login.user,
+            id: session.user.id,
+            firstname: session.user.user_metadata.firstname,
+            lastname: session.user.user_metadata.lastname
           }
         };
         //AsyncStorage.setItem('user', JSON.stringify(session.user));
         AsyncStorage.setItem('token', JSON.stringify(session.access_token));
         dispatch(onLoginSuccess(data));
+        callback({ success: true });
+      } else {
+        if(event === 'INITIAL_SESSION'){
+          callback({ success: false, message: 'Debe activar su cuenta enviada a su email!' });
+        } else if(event === 'SIGNED_OUT') {
+          callback({ success: false, message: 'usuario o password invalidos!' });
+        }
       }
     })
-    if (typeof callback === 'function' && !error) {
-      console.log("SETTING CALLBACK TRUE")
-      //AsyncStorage.setItem('user', JSON.stringify(user));
-      callback({ success: true });
-    } else {
-      callback({ success: false });
-    }
+
   } catch (e) {
     callback({ success: false });
     console.log('ERROR: ' + e);
@@ -92,40 +70,22 @@ export const login = (login, callback) => async (dispatch) => {
 export const register = (user, callback) => async (dispatch) => {
   try {
     console.log("values:"+JSON.stringify(user))
-    let { data, error } = await supabase.auth.signUp({
+    let { data: userAuth, error } = await supabase.auth.signUp({
       email: user.email,
-      password: user.password
+      password: user.password,
+      options: {
+        data: {
+          firstname: user.firstname,
+          lastname: user.lastname,
+          active: true,
+          role_id: 1
+        }
+      }
     })
-    console.log("register user "+ JSON.stringify(data))
+    console.log("register user "+ JSON.stringify(userAuth))
     console.log("register user Error "+JSON.stringify(error))
-   /* const response = await createUserWithEmailAndPassword(auth, user.email, user.password);
-    console.log("response "+response)
-    const { uid } = response.user;
-    const user_ = {
-      id: uid,
-      email: user.email,
-      fullName: user.firstname + ' ' + user.lastname,
-      avatar: '',
-      personId: uid
-    };
-    const person_ = {
-      firstname: user.firstname,
-      middlename: '',
-      lastname: user.lastname,
-      surname: '',
-      phone: '',
-      address: '',
-      birthdate: '',
-      invitedBy: ''
-    };
 
-
-    const personRef = doc(firestore, 'persona', uid);
-    await setDoc(personRef, person_);
-    const usersRef = doc(firestore, 'users', uid);
-    await setDoc(usersRef, user_);*/
-
-    dispatch(onRegister(data));
+    dispatch(onRegister(userAuth));
     if (typeof callback === 'function') {
       callback({ success: true });
     }

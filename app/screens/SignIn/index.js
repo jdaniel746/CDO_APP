@@ -50,7 +50,7 @@ const SignIn = (props) => {
             Toast.show({
               type: 'error',
               text1: 'Error',
-              text2: ' Las credenciales no son validas!'
+              text2: response.message
             });
           
           }

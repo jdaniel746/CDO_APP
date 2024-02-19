@@ -48,7 +48,7 @@ const ProfileEdit = (props) => {
   const person = useSelector((state) => state.person);
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const [avatar, setAvatar] = useState(user.avatar);
+  const [avatar, setAvatar] = useState(user?.avatar);
   const dispatch = useDispatch();
   const [birthdate, setBirthdate] = useState();
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
@@ -71,6 +71,7 @@ const ProfileEdit = (props) => {
   }, [birthdate]);
 
   useEffect(() => {
+    console.log("PR"+JSON.stringify(person))
     if (!person.person) {
       try {
         setIsLoading(true);
