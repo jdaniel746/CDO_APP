@@ -27,6 +27,7 @@ const Profile = (props) => {
   const [userData] = useState(UserData[0]);
   const auth = useSelector((state) => state.auth);
   const user = auth.user;
+  console.log("PROFILE"+JSON.stringify(user))
   /**
    * @description Simple logout with Redux
    * @author Jose Alvarado
@@ -62,7 +63,7 @@ const Profile = (props) => {
                 showsVerticalScrollIndicator={false}>
                 <ProfileDetail
                   image={user.avatar}
-                  textFirst={user?.fullName}
+                  textFirst={user?.firstname + ' ' + user?.lastname}
                   point={userData.point}
                   textSecond={userData.address}
                   textThird={userData.id}

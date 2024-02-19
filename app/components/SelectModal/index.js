@@ -18,7 +18,7 @@ const SelectModal = (props) => {
     setOptionList(
       options.map((option) => ({
         ...option,
-        checked: item.value == option.value
+        checked: item.value === option.value
       }))
     );
   };

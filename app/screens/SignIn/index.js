@@ -38,11 +38,11 @@ const SignIn = (props) => {
         login({ user: values.user, password: values.password }, (response) => {
           if (response.success) {
             navigation.navigate('Main');
-            Toast.show({
+          /*  Toast.show({
               type: 'success',
               text1: 'Exito',
               text2: ' Ingreso exitoso!'
-            });
+            });*/
             navigation.navigate('SignIn');
           } else {
             console.log('error' + JSON.stringify(response));
@@ -50,20 +50,18 @@ const SignIn = (props) => {
             Toast.show({
               type: 'error',
               text1: 'Error',
-              text2: ' Las credenciales no son validas!'
+              text2: response.message
             });
           
           }
 
-          if (response.success) {
+         /* if (response.success) {
             navigation.navigate('Main');
           } else {
             console.log('error' + JSON.stringify(response));
             setLoading(true);
             
-          }
-
-
+          }*/
         })
       );
     }

@@ -2,6 +2,7 @@ import { firestore } from '../config/firebase';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as personActionTypes from './personActionTypes';
+import supabase from "../config/supabase";
 
 const onFetchSuccess = (data) => {
   return {
@@ -32,7 +33,19 @@ export const updatePerson = (person, callback) => async (dispatch) => {
 export const fetchPerson = (uid, callback) => async (dispatch) => {
   try {
     console.log("uid:"+uid)
-    const docRef = doc(firestore, 'persona', uid);
+    let {data, error} = await supabase.from('person')
+      .select('*')
+      .eq(typeof(uid) === 'string' ? 'user_id' : 'id', uid)
+      .limit(1)
+      .single()
+    console.log("DATA:"+JSON.stringify(data)+"--"+JSON.stringify(error))
+    if(error) callback({ success: false, message: 'Error consultando persona' });
+    if(data) {
+      AsyncStorage.setItem('person', JSON.stringify(data));
+      dispatch(onFetchSuccess(data));
+      callback({ success: true });
+    }
+   /* const docRef = doc(firestore, 'persona', uid);
     onSnapshot(docRef, (querySnapshot) => {
       const data = querySnapshot.data();
       console.log("PERSONA SUCC:" + JSON.stringify(data))
@@ -47,7 +60,7 @@ export const fetchPerson = (uid, callback) => async (dispatch) => {
         }
 
       }
-    });
+    });*/
   } catch (e) {
     console.log(e);
     dispatch(onFetchError());

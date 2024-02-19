@@ -47,7 +47,7 @@ const CustomDrawer = props => {
           //source={require('../../assets/images/magenta.png')}//
           style={{padding: 20}}>
           <Image
-            source={require('../../assets/images/user.png')}
+            source={user?.avatar ?? require('../../assets/images/user.png')}
             style={{height: 80, width: 80, borderRadius: 40, marginBottom: 10}}
           />
           <Text
@@ -57,9 +57,9 @@ const CustomDrawer = props => {
               fontFamily: 'Roboto-Medium',
               marginBottom: 5,
             }}>
-            Katherin Valero
+            {user?.firstname + ' ' + user?.lastname}
           </Text>
-          <View style={{flexDirection: 'row'}}>
+         {/* <View style={{flexDirection: 'row'}}>
             <Text
               style={{
                 color: '#fff',
@@ -69,10 +69,10 @@ const CustomDrawer = props => {
               280 Coins
             </Text>
             <FontAwesome5 name="coins" size={14} color="#fff" />
-          </View>
+          </View>*/}
         </ImageBackground>
         <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 10}}>
-        <DrawerItemList {...props} />
+          <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
       <View style={{padding: 20, borderTopWidth: 1, borderTopColor: '#ccc'}}>
