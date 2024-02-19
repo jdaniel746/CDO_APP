@@ -59,7 +59,7 @@ const SignIn = (props) => {
             navigation.navigate('Main');
           } else {
             console.log('error' + JSON.stringify(response));
-            setLoading(true);
+            setLoading(false);
             
           }
 
