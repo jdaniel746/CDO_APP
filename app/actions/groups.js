@@ -1,6 +1,7 @@
 import { firestore } from '../config/firebase';
 import { setDoc, getDocs, collection, query, where, doc } from 'firebase/firestore';
 import * as GroupActionsTypes from './groupActionType';
+import supabase from "../config/supabase";
 
 const onRetrieveSuccess = (data) => {
   return {
@@ -15,17 +16,20 @@ const onUpdateSuccess = () => {
   };
 };
 
-export const retrieveGroupsByRed = (red, callback) => async (dispatch) => {
+export const retrieveGroupsByUser = (user, callback) => async (dispatch) => {
   try {
     const groups = [];
-    const groupsRef = collection(firestore, 'grupos');
+    const { data, error} = await supabase.from('groups').select('*').contains('leaders', [user])
+    console.log("grupos: "+JSON.stringify(data) + "--"+JSON.stringify(error))
+  /*  const groupsRef = collection(firestore, 'grupos');
     const q = query(groupsRef, where('red', '==', red));
     const groupsSnap = await getDocs(q);
     groupsSnap.forEach((doc) => {
       groups.push(doc.data());
-    });
+    });*/
+
     if (typeof callback === 'function') {
-      dispatch(onRetrieveSuccess(groups));
+      dispatch(onRetrieveSuccess(data));
       callback({ success: true });
     }
   } catch (e) {

@@ -1,5 +1,5 @@
-import { Button, Header, Icon, Image, SafeAreaView, Text, TextInput, CardList } from '@components';
-import { BaseColor, BaseStyle, useTheme, Images } from '@config';
+import { Button, Header, Icon, SafeAreaView, Text, TextInput, CardList } from '@components';
+import { BaseColor, BaseStyle, useTheme } from '@config';
 // Load sample data
 import Spinner from 'react-native-loading-spinner-overlay';
 import React, { useEffect, useState } from 'react';
@@ -19,7 +19,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import Toast from 'react-native-toast-message';
 import UserIcon from '../../assets/images/user.png'
 
-const { fetchPerson, updatePerson } = PersonActions;
+const { fetchPerson, updateProfile } = PersonActions;
 //const minDate = dayjs().add(2, 'day').format('YYYY-MM-DD');
 const profileValidationSchema = yup.object().shape({
   identify: yup.string().min(7, 'error.identify.min').max(8, 'error.identify.max'),
@@ -79,7 +79,6 @@ const ProfileEdit = (props) => {
   }, [birthdate]);
 
   useEffect(() => {
-    console.log("PR"+JSON.stringify(person))
     if (!person.person) {
       try {
         setIsLoading(true);
@@ -107,10 +106,14 @@ const ProfileEdit = (props) => {
     setIsLoading(true);
     form.id = person?.person.id;
     form.photo = avatar;
+    if(!birthdate) Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: 'Ingrese la fecha de nacimiento!'
+    });
     form.birthdate = birthdate;
     dispatch(
-      updatePerson(form, (response) => {
-        console.log('responseU:' + JSON.stringify(response));
+      updateProfile(form, user, (response) => {
         setIsLoading(false);
         if (response.success) {
           Toast.show({
@@ -118,6 +121,7 @@ const ProfileEdit = (props) => {
             text1: 'Exito',
             text2: ' Actualizacion del perfil exitosa!'
           });
+          navigation.navigate('Profile')
         } else {
           Toast.show({
             type: 'error',
@@ -143,7 +147,7 @@ const ProfileEdit = (props) => {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsMultipleSelection: false
       });
-      //AQUI ESTA//
+
       if (!result.canceled) {
         let actions = [];
         actions.push({ resize: { width: 300 } });

@@ -8,6 +8,12 @@ export default (state = initialState, action = {}) => {
         ...state,
         person: action.data
       };
+    case personActionType.UPDATE_PERSON_SUCCESS:
+      return {
+        ...state,
+        person: action.data.person,
+        user: action.data.user?? state.user
+      }
     default:
       return {
         ...state
