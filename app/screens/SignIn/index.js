@@ -5,11 +5,8 @@ import React, { useState } from 'react';
 import { Formik } from 'formik';
 import Toast from 'react-native-toast-message';
 import {
-  ScrollView,
   TouchableOpacity,
   View,
-  ImageBackground,
-  Image,
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
@@ -38,12 +35,7 @@ const SignIn = (props) => {
         login({ user: values.user, password: values.password }, (response) => {
           if (response.success) {
             navigation.navigate('Main');
-          /*  Toast.show({
-              type: 'success',
-              text1: 'Exito',
-              text2: ' Ingreso exitoso!'
-            });*/
-            navigation.navigate('SignIn');
+            //navigation.navigate('SignIn');
           } else {
             console.log('error' + JSON.stringify(response));
             setLoading(false);
@@ -52,16 +44,7 @@ const SignIn = (props) => {
               text1: 'Error',
               text2: response.message
             });
-          
           }
-
-         /* if (response.success) {
-            navigation.navigate('Main');
-          } else {
-            console.log('error' + JSON.stringify(response));
-            setLoading(true);
-            
-          }*/
         })
       );
     }

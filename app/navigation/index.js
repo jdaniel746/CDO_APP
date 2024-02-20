@@ -35,7 +35,6 @@ import PredicasDeGrupoSemanal from '../screens/PredicasDeGrupo';
 import ListaDePredicas from '../screens/ListaDePredicas';
 import CustomDrawer from "./components/CustomDrawer";
 import Discipulados from '../screens/Discipulados';
-import supabase from "../config/supabase";
 
 
 

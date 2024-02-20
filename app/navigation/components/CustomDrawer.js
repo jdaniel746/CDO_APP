@@ -12,11 +12,8 @@ import {
 } from '@react-navigation/drawer';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { AuthActions } from '@actions';
 import { initReactI18next, useTranslation } from 'react-i18next';
-
-import { UserData } from '@data';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 const { logout } = AuthActions;
@@ -25,15 +22,14 @@ const CustomDrawer = props => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [userData] = useState(UserData[0]);
   const auth = useSelector((state) => state.auth);
   const user = auth.user;
+
   const onLogOut = () => {
     setLoading(true);
     dispatch(
       logout((response) => {
         setLoading(false);
-        //navigation.navigate('Auth');
       })
     );
   };
@@ -47,7 +43,7 @@ const CustomDrawer = props => {
           //source={require('../../assets/images/magenta.png')}//
           style={{padding: 20}}>
           <Image
-            source={user?.avatar ?? require('../../assets/images/user.png')}
+            source={user?.avatar ? { uri: user.avatar} : require('../../assets/images/user.png')}
             style={{height: 80, width: 80, borderRadius: 40, marginBottom: 10}}
           />
           <Text

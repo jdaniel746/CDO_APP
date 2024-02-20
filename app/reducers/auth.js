@@ -16,7 +16,8 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         isLoggedIn: false,
-        user: null
+        user: null,
+        person: null
       };
     case actionTypes.SIGNUP:
       return {
