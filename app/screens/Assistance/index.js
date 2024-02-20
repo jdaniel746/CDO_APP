@@ -67,7 +67,7 @@ const AssistanceGroup = () => {
     async function fetch() {
       let { data: groups, error } = await supabase
         .from('groups')
-        .select(' id, name')
+        .select(' id, name, leaders')
         .contains('leaders', [auth.user.id])
       if(groups.length > 0){
         setGroups(groups.map((gr) => {
@@ -89,13 +89,21 @@ console.log("EVENTS"+JSON.stringify(events))
           return temp
         }))
       }
-      let {data: leaders, errors3} = await supabase.from('person').select('id, firstname, lastname, photo')
+
+    }
+    fetch()
+  }, []);
+
+  useEffect(() => {
+    async function fetchLeaders() {
+      let {data: leaders, errors3} = await supabase.from('person').select('id, firstname, lastname, photo').contains('user_id', grupo.leaders)
+      console.log("resultado leaders"+JSON.stringify(leaders) + "--" + JSON.stringify(errors3))
       if(leaders.length > 0){
         console.log(leaders)
       }
     }
-    fetch()
-  }, []);
+    fetchLeaders()
+  }, [grupo]);
 
 
 

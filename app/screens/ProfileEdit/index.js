@@ -28,17 +28,25 @@ const profileValidationSchema = yup.object().shape({
     .required('error.firstname.required')
     .min(3, 'error.firstname.min')
     .max(15, 'error.firstname.max'),
-  middlename: yup.string().min(3, 'error.middlename.min').max(20, 'error.middlename.max'),
+  secondname: yup.string().min(3, 'error.middlename.min').max(20, 'error.middlename.max'),
   lastname: yup
     .string()
     .required('error.lastname.required')
     .min(3, 'error.lastname.min')
     .max(15, 'error.lastname.max'),
   surname: yup.string().min(3, 'error.surname.min').max(20, 'error.surname.max'),
-  address: yup.string().min(10, 'error.address.min').max(100, 'error.address.max'),
+  address: yup.string(),
   birthdate: yup.date(),
-  phone: yup.number().test('len', 'error.phone.length', (val) => val.toString().length === 7),
-  code: yup.number().test('len', 'error.code.length', (val) => val.toString().length === 3)
+  phone_number: yup.number().typeError("error.phone.format")
+    .positive("error.phone.positive")
+    .integer("error.phone.integer")
+    .test('len', 'error.phone.length', val => val?.toString().length === 7)
+    .required('error.phone.required'),
+  phone_code: yup.number().typeError("That doesn't look like a phone number")
+    .positive("A phone number can't start with a minus")
+    .integer("A phone number can't include a decimal point")
+    .test('len', 'error.code.length', val => val?.toString().length === 3)
+    .required('error.code.required')
 });
 
 const ProfileEdit = (props) => {
@@ -97,7 +105,7 @@ const ProfileEdit = (props) => {
 
   const handlerUpdate = (form) => {
     setIsLoading(true);
-    form.id = user.id;
+    form.id = person?.person.id;
     form.photo = avatar;
     form.birthdate = birthdate;
     dispatch(
@@ -182,13 +190,13 @@ const ProfileEdit = (props) => {
           initialValues={{
             identify: person.person?.identify,
             firstname: person.person?.firstname,
-            middlename: person.person?.middlename,
+            secondname: person.person?.secondname,
             lastname: person.person?.lastname,
             surname: person.person?.surname,
             address: person.person?.address,
             birthdate: person.person?.birthdate ?? birthdate,
-            phone: person.person?.phone,
-            code: person.person?.code
+            phone_number: person.person?.phone_number,
+            phone_code: person.person?.phone_code
           }}
           validationSchema={profileValidationSchema}
           onSubmit={(values) => {
@@ -268,14 +276,14 @@ const ProfileEdit = (props) => {
                   </View>
                   <TextInput
                     style={BaseStyle.textInput}
-                    onChangeText={handleChange('middlename')}
-                    name="middlename"
-                    onBlur={handleBlur('middlename')}
-                    errors={errors.middlename}
+                    onChangeText={handleChange('secondname')}
+                    name="secondname"
+                    onBlur={handleBlur('secondname')}
+                    errors={errors.secondname}
                     autoCorrect={false}
                     placeholder={t('input_middlename')}
                     placeholderTextColor={BaseColor.grayColor}
-                    value={values.middlename}
+                    value={values.secondname}
                     selectionColor={colors.primary}
                   />
                   <View style={styles.contentTitle}>
@@ -360,24 +368,24 @@ const ProfileEdit = (props) => {
                   <View style={{ flexDirection: 'row', marginTop: 10 }}>
                     <View style={{ flex: 3 }}>
                       <TextInput
-                        onChangeText={handleChange('code')}
+                        onChangeText={handleChange('phone_code')}
                         placeholder={t('code')}
-                        name="code"
+                        name="phone_code"
                         onBlur={handleBlur('code')}
-                        errors={errors.code}
+                        errors={errors.phone_code}
                         keyboardType="numeric"
-                        value={values.code}
+                        value={values.phone_code}
                       />
                     </View>
                     <View style={{ flex: 7, marginLeft: 10 }}>
                       <TextInput
-                        onChangeText={handleChange('phone')}
+                        onChangeText={handleChange('phone_number')}
                         placeholder={t('phone_number')}
                         keyboardType="numeric"
-                        name="phone"
-                        onBlur={handleBlur('phone')}
-                        errors={errors.phone}
-                        value={values.phone}
+                        name="phone_number"
+                        onBlur={handleBlur('phone_number')}
+                        errors={errors.phone_number}
+                        value={values.phone_number}
                       />
                     </View>
                   </View>

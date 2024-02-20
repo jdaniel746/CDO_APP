@@ -12,7 +12,7 @@ const SelectModal = (props) => {
   const [selectedItem, setSelectedItem] = useState(selected);
   const { colors } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
-
+console.log("SELECT "+JSON.stringify(options))
   const onSelectFilter = (item) => {
     setSelectedItem(item);
     setOptionList(
