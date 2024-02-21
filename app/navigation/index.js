@@ -78,30 +78,18 @@ const DrawerNavigator = () => {
           marginLeft: 0,
           fontFamily: 'Roboto-Medium',
           fontSize: 15,
-         
         },
       }}
-      
     >
       <Drawer.Screen name={t("Home")} component={MainScreens} />
       <Drawer.Screen name={t("Contact")} component={PSelectAssignee} />
       <Drawer.Screen name={t("Preach of group")} component={PredicasDeGrupoSemanal} />
-      <Drawer.Screen name={t("Discipulados")} component={Discipulados} />
+      <Drawer.Screen name={t("Disciples")} component={Discipulados} />
       <Drawer.Screen name={t("Assistance")} component={Assistance} />
       <Drawer.Screen name="Lista" component={ListaDePredicas} />
- 
-
     </Drawer.Navigator>
   );
 };
-
-
-
-
-
-
-
-
 
 const Assistance = () => {
   
@@ -234,7 +222,7 @@ const Navigator = () => {
     return null;
   }
   console.log('STATE:' + JSON.stringify(auth.user));
-  console.log('PROCESS' + process.env);
+  console.log('PROCESS' + JSON.stringify(process.env));
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       <NavigationContainer theme={theme} ref={navigationRef}>

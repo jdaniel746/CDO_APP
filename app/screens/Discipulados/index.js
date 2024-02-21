@@ -59,7 +59,7 @@ const Discipulados = (props) => {
                 edges={["right", "top", "left"]}
             >
                 <Header
-                    title={t("Discipulados")}
+                    title={t("Disciples")}
                     renderLeft={() => {
                         return (
                             <Icon
