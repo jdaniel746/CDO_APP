@@ -32,7 +32,7 @@ const index = ({ styleThumb, users = [], limit = 0, isShowMore = true }) => {
         return (
           <Image
             key={index}
-            source={{uri:item.image}}
+            source={ typeof item.image === "number" ? item.image : {uri:item.image}}
             style={[styles.thumb, index != 0 ? { marginLeft: -15 } : {}, styleThumb]}
           />
         );
