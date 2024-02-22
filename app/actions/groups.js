@@ -5,7 +5,7 @@ import supabase from "../config/supabase";
 
 const onRetrieveSuccess = (data) => {
   return {
-    type: GroupActionsTypes.RETRIEVE_SUCCESS,
+    type: GroupActionsTypes.RETRIEVE_GROUP_SUCCESS,
     data
   };
 };
@@ -17,16 +17,10 @@ const onUpdateSuccess = () => {
 };
 
 export const retrieveGroupsByUser = (user, callback) => async (dispatch) => {
+  console.log("entro retieve "+JSON.stringify(user))
   try {
-    const groups = [];
-    const { data, error} = await supabase.from('groups').select('*').contains('leaders', [user])
+    const { data, error} = await supabase.from('groups').select('*').contains('viewers', [user.person_id])
     console.log("grupos: "+JSON.stringify(data) + "--"+JSON.stringify(error))
-  /*  const groupsRef = collection(firestore, 'grupos');
-    const q = query(groupsRef, where('red', '==', red));
-    const groupsSnap = await getDocs(q);
-    groupsSnap.forEach((doc) => {
-      groups.push(doc.data());
-    });*/
 
     if (typeof callback === 'function') {
       dispatch(onRetrieveSuccess(data));

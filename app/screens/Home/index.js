@@ -1,6 +1,5 @@
 import { PieChart, Project02, SafeAreaView, TabTag } from '@components';
 import { BaseColor, BaseStyle, useTheme } from '@config';
-import { PProjectHome } from '@data';
 import * as Utils from '@utils';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,30 +15,19 @@ const PHome = (props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const dispatch = useDispatch();
-  const grupos = useSelector((state) => state.groups);
+  const selector = useSelector((state) => state.groups);
+  const [tabs, setTabs] = useState([])
+  const [tab, setTab] = useState(null);
 
   useEffect(() => {
-    console.log('Grupos: ' + JSON.stringify(grupos));
-  }, [grupos]);
-  const tabs = [
-    {
-      id: 'all',
-      title: t('all')
-    },
-    {
-      id: 'on_going',
-      title: '4.1'
-    },
-    {
-      id: 'completed',
-      title: '4.2'
-    },
-    {
-      id: 'on_hold',
-      title: '4.3'
+    console.log('Gruposs: ' + JSON.stringify(selector));
+    if(selector.groups.length > 0) {
+      setTabs(selector.groups)
+      setTab(selector.groups[0])
     }
-  ];
-  const [tab, setTab] = useState(tabs[0]);
+  }, [selector.groups]);
+
+
   const data = [
     {
       name: t('pending'),
@@ -61,21 +49,25 @@ const PHome = (props) => {
     }
   ];
 
-  const projects = useMemo(() => {
-    Utils.enableExperimental();
-    if (tab.id == 'all') {
-      return PProjectHome;
-    } else {
-      return PProjectHome.filter((project) => project.status == tab.id);
+  const groups = useMemo(() => {
+    console.log("KKKK "+JSON.stringify(tab)+ " "+JSON.stringify(tabs))
+    if(tab){
+      Utils.enableExperimental();
+      if (tab.id == 'all') {
+        return tabs;
+      } else {
+        return tabs.filter((gr) => gr.id == tab.id);
+      }
     }
+
   }, [tab]);
 
   const goProjectDetail = (item) => () => {
-    dispatch(
+    /*dispatch(
       retrieveGroupsByRed('jovenes', (response) => {
         console.log('response G ');
       })
-    );
+    );*/
     //navigation.navigate('PProjectView', { item: item });
   };
 
@@ -93,17 +85,17 @@ const PHome = (props) => {
         <PieChart data={data} />
         <TabTag
           style={{ paddingHorizontal: 10, paddingBottom: 20 }}
-          tabs={tabs}
+          tabs={[...tabs, {id: 'all', name: t('all')}]}
           tab={tab}
           onChange={(tab) => setTab(tab)}
         />
         <FlatList
           contentContainerStyle={styles.paddingFlatList}
-          data={projects}
+          data={groups}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
             <Project02
-              title={item.title}
+              title={item.name}
               description={item.description}
               days={item.days}
               members={item.members}
@@ -122,7 +114,7 @@ const PHome = (props) => {
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView style={BaseStyle.safeAreaView} edges={['right', 'top', 'left']}>
-        {renderContent()}
+        {tabs.length > 0 && (renderContent())}
       </SafeAreaView>
     </View>
   );

@@ -35,7 +35,11 @@ import PredicasDeGrupoSemanal from '../screens/PredicasDeGrupo';
 import ListaDePredicas from '../screens/ListaDePredicas';
 import CustomDrawer from "./components/CustomDrawer";
 import Discipulados from '../screens/Discipulados';
-
+import supabase from "../config/supabase";
+import Toast from 'react-native-toast-message';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { retrieveGroupsByUser } from "../actions/groups";
+import * as actionTypes from "../actions/authActionTypes";
 
 
 const SettingsStack = createStackNavigator();
@@ -177,7 +181,15 @@ const MainScreens = () => {
   );
 };
 
-const Navigator = () => {
+const onLoginSuccess = (data) => {
+  return {
+    type: actionTypes.LOGIN_SUCCESS,
+    data
+  };
+};
+
+const Navigator = (props) => {
+  const { navigation } = props;
   const { theme } = useTheme();
   const isDarkMode = useColorScheme() === 'dark';
   const language = useSelector(languageSelect);
@@ -185,7 +197,6 @@ const Navigator = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const navigationRef = useRef(null);
-  
 
   useEffect(() => {
     console.log('STATE NAVIGATION: ' + JSON.stringify(auth));
@@ -214,15 +225,85 @@ const Navigator = () => {
       });
       setLoading(false);
       Utils.enableExperimental();
+
+      supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log("ONAUTH")
+        console.log(event)
+        console.log("----------")
+        console.log(session)
+        switch (event) {
+          case 'USER_UPDATED':
+            if (session) {
+              await init(session)
+            }
+            break;
+          case 'SIGNED_IN':
+            console.log("entro signed")
+            if (session) {
+              await init(session, dispatch)
+              navigation.navigate('Main');
+            } else {
+              Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Debe activar su cuenta enviada a su email!'
+              });
+              //callback({ success: false, message: 'Debe activar su cuenta enviada a su email!' });
+            }
+            break;
+          case 'SIGNED_OUT':
+            console.log("SIGNED OUT")
+            break;
+          case 'INITIAL_SESSION':
+            console.log("entro initial sesion "+JSON.stringify(session))
+            if(session) {
+              await init(session)
+              navigation.navigate('Main');
+            }
+            else {
+              Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'usuario o password invalidos!'
+              });
+              //callback({ success: false, message: 'usuario o password invalidos!' });
+            }
+            break;
+          default:
+            console.log("default")
+          //callback({ success: false, message: 'usuario o password invalidos!' });
+        }
+      })
     };
     onProcess();
   }, []);
+
+  const init = async function(session) {
+    const { data, error } = await supabase.from('person').select('id').eq('user_id', session.user.id).single()
+    let sessionData = {
+      user: {
+        lang: session.user.user_metadata.lang ?? 'es',
+        email: session.user.email,
+        id: session.user.id,
+        firstname: session.user.user_metadata.firstname,
+        lastname: session.user.user_metadata.lastname,
+        avatar: session.user.user_metadata.avatar,
+        role_id: session.user.user_metadata.role_id,
+        active: session.user.user_metadata.active,
+        person_id: data.id
+      }
+    };
+    AsyncStorage.setItem('token', JSON.stringify(session.access_token));
+    dispatch(onLoginSuccess(sessionData));
+    dispatch(retrieveGroupsByUser(sessionData.user, (response) => {
+      console.log(JSON.stringify(response))
+    }))
+  }
 
   if (loading) {
     return null;
   }
   console.log('STATE:' + JSON.stringify(auth.user));
-  console.log('PROCESS' + JSON.stringify(process.env));
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       <NavigationContainer theme={theme} ref={navigationRef}>
