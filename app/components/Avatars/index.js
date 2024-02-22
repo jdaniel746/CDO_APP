@@ -7,7 +7,6 @@ import { useTheme } from '@config';
 
 const index = ({ styleThumb, users = [], limit = 0, isShowMore = true }) => {
   const { colors } = useTheme();
-
   const { remainder, usersLimit } = useMemo(() => {
     const limitInt = parseInt(limit);
     let remainder = 0;
@@ -33,7 +32,7 @@ const index = ({ styleThumb, users = [], limit = 0, isShowMore = true }) => {
         return (
           <Image
             key={index}
-            source={item.image}
+            source={ typeof item.image === "number" ? item.image : {uri:item.image}}
             style={[styles.thumb, index != 0 ? { marginLeft: -15 } : {}, styleThumb]}
           />
         );
