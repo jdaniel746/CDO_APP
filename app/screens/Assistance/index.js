@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useTheme, BaseStyle, BaseColor } from '../../config';
-import { GroupLeaders, PTeamMembersInCreate } from '@data';
+import { PTeamMembersInCreate } from '@data';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import styles from './styles';
@@ -22,29 +22,9 @@ import Avatars from '../../components/Avatars';
 import { useSelector } from 'react-redux';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import supabase from "../../config/supabase";
-import { useRealtime } from "react-supabase";
 import Spinner from "react-native-loading-spinner-overlay";
 import Toast from "react-native-toast-message";
 
-
-/*const eventList2 = [
-  {
-    value: 'most_helpful',
-    text: 'Grupo'
-  },
-  {
-    value: 'most_favourable',
-    text: 'Discipulado'
-  },
-  {
-    value: 'most_crictical',
-    text: 'Domingo'
-  },
-  {
-    value: 'most_recent',
-    text: 'Otros'
-  }
-];*/
 
 const AssistanceGroup = () => {
   const { t } = useTranslation();
@@ -52,8 +32,8 @@ const AssistanceGroup = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const date = dayjs(new Date()).format('DD-MMM-YYYY');
-  const [grupo, setGrupo] = useState();
-  const [event, setEvent] = useState();
+  const [grupo, setGrupo] = useState(null);
+  const [event, setEvent] = useState(null);
   const [assistants, setAssistants] = useState([]);
   const auth = useSelector((state) => state.auth);
   const [offerUSD, setOfferUSD] = useState('0');
@@ -64,24 +44,22 @@ const AssistanceGroup = () => {
   const [groups, setGroups] = useState([])
   const [eventList, setEventList] = useState([])
   const [isLoading, setIsLoading] = useState(false);
-  //const [result, reexecute] = useRealtime('task')
-  //const  {data: groups, error, fetching } = result;
+  const [leaders, setLeaders] = useState([])
+
   useEffect(() => {
     async function fetch() {
       setIsLoading(true)
-      console.log("ON SELECT GR "+JSON.stringify(auth.user))
-      let { data: groups, error } = await supabase
+      let { data, error } = await supabase
         .from('groups')
         .select(' id, name, leaders')
         .contains('leaders', [auth.user.person_id.toString()])
-      console.log("gr "+JSON.stringify(groups)+'-'+JSON.stringify(error))
-      if(groups.length > 0){
-        setGroups(groups.map((gr) => {
-          let temp = {}
-          temp.value = gr.id
-          temp.text = gr.name
-          return temp
-        }))
+
+      if(data.length > 0){
+        let groupList = data.map((gr) => {
+          return { value: gr.id, text: gr.name, leaders: gr.leaders}
+        })
+        setGroups(groupList)
+        setGrupo(groupList[0])
       } else {
         Toast.show({
           type: 'error',
@@ -90,17 +68,16 @@ const AssistanceGroup = () => {
         });
         navigation.navigate('Home')
       }
-      let { data: events, error2 } = await supabase
+      let { data: dataEvent, error2 } = await supabase
         .from('events')
         .select(' id, name')
-console.log("EVENTS"+JSON.stringify(events))
-      if(events.length > 0) {
-        setEventList(events.map((e) => {
-          let temp = {}
-          temp.value = e.id.toString()
-          temp.text = e.name
-          return temp
-        }))
+
+      if(dataEvent.length > 0) {
+        let events = dataEvent.map((e) => {
+          return { value: e.id, text: e.name}
+        })
+        setEventList(events)
+        setEvent(events[0])
       }
       setIsLoading(false)
     }
@@ -109,16 +86,16 @@ console.log("EVENTS"+JSON.stringify(events))
 
   useEffect(() => {
     async function fetchLeaders() {
-      let {data: leaders, errors3} = await supabase.from('person').select('id, firstname, lastname, photo').contains('user_id', grupo.leaders)
-      console.log("resultado leaders"+JSON.stringify(leaders) + "--" + JSON.stringify(errors3))
-      if(leaders.length > 0){
-        console.log(leaders)
+      let {data, errors3} = await supabase.from('person').select('id, firstname, lastname, photo')
+        .in('id', groups.find((g) => g.value === grupo.value).leaders)
+      if(data && data.length > 0){
+        setLeaders(data)
       }
     }
-    fetchLeaders()
+    if(grupo) {
+      fetchLeaders()
+    }
   }, [grupo]);
-
-
 
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
@@ -197,11 +174,11 @@ console.log("EVENTS"+JSON.stringify(events))
                 />
               </View>
               <View style={{ marginTop: -20 }}>
-                <Avatars users={GroupLeaders} limit={3} isShowMore={false} />
+                <Avatars users={leaders.map((l) => { return {image: l.photo}})} limit={3} isShowMore={false} />
               </View>
               <Text caption1 grayColor>
-                {GroupLeaders.map((member) => {
-                  return member.name;
+                {leaders.map((member) => {
+                  return member.firstname + ' ' + member.lastname;
                 }).join(', ')}
               </Text>
               <View style={{ marginTop: 20 }}>

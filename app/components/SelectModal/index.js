@@ -12,7 +12,7 @@ const SelectModal = (props) => {
   const [selectedItem, setSelectedItem] = useState(selected);
   const { colors } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
-console.log("SELECT "+JSON.stringify(options))
+
   const onSelectFilter = (item) => {
     setSelectedItem(item);
     setOptionList(
@@ -24,8 +24,10 @@ console.log("SELECT "+JSON.stringify(options))
   };
 
   useEffect(() => {
-    onSelectFilter(selectedItem);
-  }, []);
+    if(options.length > 0 && selected != null ) {
+      onSelectFilter(selected);
+    }
+  }, [options, selected]);
 
   return (
     <>
@@ -38,22 +40,24 @@ console.log("SELECT "+JSON.stringify(options))
           onPress={() => {
             setModalVisible(true);
           }}>
-          <ProductSpecGrid title={selectedItem.text} description={t(label)} />
+          <ProductSpecGrid title={selectedItem?.text} description={t(label)} />
           <Icon name="angle-down" size={14} color={colors.text} />
         </TouchableOpacity>
       </View>
-      <ModalFilter
-        options={optionsList}
-        isVisible={modalVisible}
-        onSwipeComplete={() => {
-          setModalVisible(false);
-        }}
-        onApply={() => {
-          onApply(selectedItem);
-          setModalVisible(false);
-        }}
-        onSelectFilter={onSelectFilter}
-      />
+      {options && (
+        <ModalFilter
+          options={optionsList}
+          isVisible={modalVisible}
+          onSwipeComplete={() => {
+            setModalVisible(false);
+          }}
+          onApply={() => {
+            onApply(selectedItem);
+            setModalVisible(false);
+          }}
+          onSelectFilter={onSelectFilter}
+        />
+      )}
     </>
   );
 };
