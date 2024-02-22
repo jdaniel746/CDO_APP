@@ -378,11 +378,13 @@
 	"error.invitadoPor.min": "El nombre debe tener minimo 3 caracteres",
 	"error.invitadoPor.max": "El nombre debe tener maximo 15 caracteres",
 
-	"phone_local": "Telefono local",
-	"code_local": "Codigo",
-	"Invited_by": "Invitado por",
+	"local_number": "Telefono local",
+	"phone_code": "Codigo",
+	"local_code": "Codigo Local",
+	"invited_by": "Invitado por",
 	"local_number": "Numero local",
-	"Add_Person": "Agregar Persona"
+	"Add_Person": "Agregar Persona",
+	"local_code": "Codigo local"
 	
 	
 }

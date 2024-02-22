@@ -19,8 +19,9 @@ const firebaseConfig = {
   messagingSenderId: MESSAGING_SENDER_ID,
   appId: APP_ID,
   measurementId: ''
-};
+  
 
+};
 
 const app = initializeApp(firebaseConfig);
 /*const auth = initializeAuth(app, {

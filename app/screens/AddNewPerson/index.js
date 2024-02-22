@@ -18,22 +18,17 @@ import { storage } from '@config/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import Toast from 'react-native-toast-message';
 import UserIcon from '../../assets/images/user.png'
-import { AuthActions } from '@actions';
-//import * as ImagePicker from 'expo-image-picker';
-//import * as ImageManipulator from 'expo-image-manipulator';
-const { register } = AuthActions;
-
 
 const { fetchPerson, updatePerson } = PersonActions;
 //const minDate = dayjs().add(2, 'day').format('YYYY-MM-DD');
-
-const newValidationSchema = yup.object().shape({
+const profileValidationSchema = yup.object().shape({
   identify: yup.string().min(7, 'error.identify.min').max(8, 'error.identify.max'),
   firstname: yup
     .string()
     .required('error.firstname.required')
     .min(3, 'error.firstname.min')
     .max(15, 'error.firstname.max'),
+    //invitedBy: yup.string().min(3, 'error.middlename.min').max(20, 'error.middlename.max'),
   lastname: yup
     .string()
     .required('error.lastname.required')
@@ -41,25 +36,44 @@ const newValidationSchema = yup.object().shape({
     .max(15, 'error.lastname.max'),
   address: yup.string().min(10, 'error.address.min').max(100, 'error.address.max'),
   birthdate: yup.date(),
-  phone: yup.number().test('len', 'error.phone.length', (val) => val.toString().length === 7),
-  local: yup.number().test('len', 'error.phone.length', (val) => val.toString().length === 7),
-  code: yup.number().test('len', 'error.code.length', (val) => val.toString().length === 3),
-  code_local: yup.number().test('len', 'error.code.length', (val) => val.toString().length === 3),
-  Invited_by: yup
-    .string()
-    .required('error.invitadoPor.required')
-    .min(3, 'error.invitadoPor.min')
-    .max(15, 'error.invitadoPor.max'),
-});
+  phone_number: yup.number().typeError("error.phone.format")
+  .positive("error.phone.positive")
+  .integer("error.phone.integer")
+  .test('len', 'error.phone.length', val => val?.toString().length === 7)
+  .required('error.phone.required'),
+  phone_code: yup.number().typeError("That doesn't look like a phone number")
+  .positive("A phone number can't start with a minus")
+  .integer("A phone number can't include a decimal point")
+  .test('len', 'error.code.length', val => val?.toString().length === 3)
+  .required('error.code.required'),
 
+  local_number: yup.number().typeError("error.phone.format")
+  .positive("error.phone.positive")
+  .integer("error.phone.integer")
+  .test('len', 'error.phone.length', val => val?.toString().length === 7)
+  .required('error.phone.required'),
+  local_code: yup.number().typeError("That doesn't look like a phone number local")
+  .positive("A phone number can't start with a minus")
+  .integer("A phone number can't include a decimal point")
+  .test('len', 'error.code.length', val => val?.toString().length === 3)
+  .required('error.code.required'),
+
+  invited_by: yup
+  .string()
+  .required('error.firstname.required')
+  .min(3, 'error.firstname.min')
+  .max(15, 'error.firstname.max'),
+});
 
 const AddNew = (props) => {
   const { navigation } = props;
+  const auth = useSelector((state) => state.auth);
+  const user = auth.user;
+  const person = useSelector((state) => state.person);
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const [loading, setLoading] = useState(false);
+  const [avatar, setAvatar] = useState(user.avatar);
   const dispatch = useDispatch();
-
   const [birthdate, setBirthdate] = useState();
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -77,50 +91,64 @@ const AddNew = (props) => {
     hideDateTimePicker();
   };
 
-  const onAddNew = (values) => {
-    if (
-      values.identify !== '' ,
-      values.firstname !== '' &&
-      values.lastname !== '' &&
-      values.address !== '' &&
-      values.birthdate !== '' &&
-      values.code !== '' &&
-      values.phone!== '' &&
-      values.code_local!== '' &&
-      values.code_local!== '' &&
-      values.local!== '' &&
-      values.Invited_by !== ''
+  useEffect(() => {
+  }, [birthdate]);
 
-    ) {
-      setLoading(true);
-      dispatch(
-        register(values, (response) => {
-          if (response.success) {
-            Toast.show({
-              type: 'success',
-              text1: 'Exito',
-              text2: ' Registro exitoso!'
-            });
-            navigation.navigate('Assistance');
-          } else {
-            console.log('error' + JSON.stringify(response));
-            setLoading(false);
-            Toast.show({
-              type: 'error',
-              text1: 'Error',
-              text2: ' No se pudo registrar!'
-            });
-            
-          }
-        })
-      );
+  useEffect(() => {
+    if (!person.person) {
+      try {
+        setIsLoading(true);
+        dispatch(
+          fetchPerson(user.id, (response) => {
+            console.log('response:' + JSON.stringify(response));
+            setIsLoading(false);
+            if(!response.success){
+              Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: response.message
+              });
+            }
+          })
+        );
+      } catch (e) {
+        setIsLoading(false);
+        console.log('ERROR PERSONA :' + e);
+      }
     }
+  }, [person]);
+
+  const handlerUpdate = (form) => {
+    setIsLoading(true);
+    form.id = user.id;
+    form.birthdate = birthdate;
+    dispatch(
+      updatePerson(form, (response) => {
+        console.log('responseU:' + JSON.stringify(response));
+        setIsLoading(false);
+        if (response.success) {
+          Toast.show({
+            type: 'success',
+            text1: 'Exito',
+            text2: ' Registro Exitoso!'
+          });
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'No se pudo registrar!'
+          });
+        }
+      })
+    );
   };
+
+ 
+
   return (
     <>
-    <Spinner visible={isLoading} />
-
-     
+      <Spinner visible={isLoading} />
+      {person.person && (
         <Formik
           initialValues={{
             identify: '',
@@ -128,17 +156,22 @@ const AddNew = (props) => {
             lastname: '',
             address: '', 
             birthdate: '',
-            phone: '',
-            code: '',
-            code_local: '',
-            local: '',
-            
+            phone_code: '',
+            phone_number: '',
+            local_number: '',
+            local_code: '',
+            invited_by: ''
+
+           
+            /*code_local: '',
+            phone_local: '',
+            invitedBy: '',*/
           }}
-          validationSchema={newValidationSchema}
+          validationSchema={profileValidationSchema}
           onSubmit={(values) => {
-            onAddNew(values);
+            handlerUpdate(values);
           }}>
-          {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
+          {({ handleSubmit, setFieldValue, handleChange, handleBlur, values, errors }) => (
             <SafeAreaView style={BaseStyle.safeAreaView} edges={['right', 'top', 'left']}>
               <DateTimePicker
                 mode="date"
@@ -159,8 +192,9 @@ const AddNew = (props) => {
                 onPressRight={() => {}}
               />
               <ScrollView>
-              <View style={styles.contain}>
+                <View style={styles.contain}>
                   {/*<View><Image source={image} style={styles.thumb} /></View>*/}
+                  
                   
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
@@ -195,8 +229,7 @@ const AddNew = (props) => {
                     placeholderTextColor={BaseColor.grayColor}
                     value={values.firstname}
                     selectionColor={colors.primary}
-                  />           
-                  
+                  />
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
                       {t('input_lastname')}
@@ -214,7 +247,6 @@ const AddNew = (props) => {
                     value={values.lastname}
                     selectionColor={colors.primary}
                   />
-                  
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
                       {t('input_address')}
@@ -256,102 +288,113 @@ const AddNew = (props) => {
                       </TouchableOpacity>
                     }
                   />
+
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
                       {t('input_phone')}
                     </Text>
                   </View>
+
                   <View style={{ flexDirection: 'row', marginTop: 10 }}>
                     <View style={{ flex: 3 }}>
                       <TextInput
-                        onChangeText={handleChange('code')}
-                        placeholder={t('code')}
-                        name="code"
-                        onBlur={handleBlur('code')}
-                        errors={errors.code}
+                        onChangeText={handleChange('phone_code')}
+                        placeholder={t('phone_code')}
+                        name="phone_code"
+                        onBlur={handleBlur('phone_code')}
+                        errors={errors.phone_code}
                         keyboardType="numeric"
-                        value={values.code}
+                        value={values.phone_code}
                       />
                     </View>
                     <View style={{ flex: 7, marginLeft: 10 }}>
                       <TextInput
-                        onChangeText={handleChange('phone')}
+                        onChangeText={handleChange('phone_number')}
                         placeholder={t('phone_number')}
                         keyboardType="numeric"
-                        name="phone"
-                        onBlur={handleBlur('phone')}
-                        errors={errors.phone}
-                        value={values.phone}
+                        name="phone_number"
+                        onBlur={handleBlur('phone_number')}
+                        errors={errors.phone_number}
+                        value={values.phone_number}
                       />
                     </View>
                   </View>
 
 
+
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
-                      {t('phone_local')}
+                      {t('Local')}
                     </Text>
                   </View>
+
                   <View style={{ flexDirection: 'row', marginTop: 10 }}>
                     <View style={{ flex: 3 }}>
                       <TextInput
-                        onChangeText={handleChange('code_local')}
-                        placeholder={t('code_local')}
-                        name="code_local"
-                        onBlur={handleBlur('code_local')}
-                        errors={errors.code_local}
+                        onChangeText={handleChange('local_code')}
+                        placeholder={t('local_code')}
+                        name="local_code"
+                        onBlur={handleBlur('local_code')}
+                        errors={errors.local_code}
                         keyboardType="numeric"
-                        value={values.code_local}
+                        value={values.local_code}
                       />
                     </View>
                     <View style={{ flex: 7, marginLeft: 10 }}>
                       <TextInput
-                        onChangeText={handleChange('local')}
-                        placeholder={t('code_local')}
+                        onChangeText={handleChange('local_number')}
+                        placeholder={t('local_number')}
                         keyboardType="numeric"
-                        name="local"
-                        onBlur={handleBlur('local')}
-                        errors={errors.local}
-                        value={values.local}
+                        name="local_number"
+                        onBlur={handleBlur('local_number')}
+                        errors={errors.local_number}
+                        value={values.local_number}
                       />
-
                     </View>
                   </View>
 
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
-                      {t('Invited_by')}
+                      {t('invited_by')}
                     </Text>
                   </View>
                   <TextInput
                     style={BaseStyle.textInput}
-                    onChangeText={handleChange('Invited_by')}
-                    name="Invited_by"
-                    onBlur={handleBlur('Invited_by')}
-                    errors={errors.Invited_by}
+                    onChangeText={handleChange('invited_by')}
+                    name="invited_by"
+                    onBlur={handleBlur('invited_by')}
+                    errors={errors.invited_by}
                     autoCorrect={false}
-                    multiline={true}
-                    placeholder={t('Invited_by')}
+                    placeholder={t('invited_by')}
                     placeholderTextColor={BaseColor.grayColor}
-                    value={values.Invited_by}
+                    value={values.invited_by}
                     selectionColor={colors.primary}
                   />
+
+                 
+
+                 
+
+                  
+                  
+                  
+                  
                   
 
                   
                 </View>
               </ScrollView>
               <View style={{ padding: 20 }}>
-                <Button full onPress={handleSubmit} loading={loading}>
+                <Button full onPress={handleSubmit}>
                   {t('confirm')}
                 </Button>
               </View>
             </SafeAreaView>
           )}
         </Formik>
+      )}
     </>
   );
 };
-
 
 export default AddNew;
