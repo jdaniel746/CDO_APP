@@ -33,12 +33,9 @@ const SignIn = (props) => {
       setLoading(true);
       dispatch(
         login({ user: values.user, password: values.password }, (response) => {
-          if (response.success) {
-            navigation.navigate('Main');
-            //navigation.navigate('SignIn');
-          } else {
+          setLoading(false);
+          if (!response.success)  {
             console.log('error' + JSON.stringify(response));
-            setLoading(false);
             Toast.show({
               type: 'error',
               text1: 'Error',

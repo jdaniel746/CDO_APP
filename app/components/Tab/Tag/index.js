@@ -6,6 +6,7 @@ import { useTheme, BaseColor, Typography } from '@config';
 
 const TabTag = ({ tabs = [], tab = {}, onChange = () => {}, style = {} }) => {
   const { colors } = useTheme();
+  console.log("taps "+JSON.stringify(tabs))
   return (
     <View style={[styles.tabBar, style]}>
       {tabs.map((item, index) => (
@@ -21,7 +22,7 @@ const TabTag = ({ tabs = [], tab = {}, onChange = () => {}, style = {} }) => {
             color: tab.id == item.id ? BaseColor.whiteColor : colors.border
           }}
           onPress={() => onChange(item)}>
-          {item.title}
+          {item.name}
         </Tag>
       ))}
     </View>

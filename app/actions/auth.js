@@ -4,6 +4,7 @@ import {sendPasswordResetEmail } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import supabase from "../config/supabase";
+import { retrieveGroupsByUser } from "./groups";
 
 const onLoginSuccess = (data) => {
   return {
@@ -31,74 +32,15 @@ export const login = (login, callback) => async (dispatch) => {
       password: login.password
     })
 
-    console.log("ON LOGIN"+JSON.stringify(user)+'--'+JSON.stringify(session)+'--'+JSON.stringify(error))
-
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("ONAUTH")
-      console.log(event)
-      console.log("----------")
-      console.log(session)
-      switch (event) {
-        case 'USER_UPDATED':
-          if (session) {
-            let data = {
-              user: {
-                lang: session.user.user_metadata.lang ?? 'es', 
-                email: session.user.email,
-                id: session.user.id,
-                firstname: session.user.user_metadata.firstname,
-                lastname: session.user.user_metadata.lastname,
-                avatar: session.user.user_metadata.avatar,
-                role_id: session.user.user_metadata.role_id,
-                active: session.user.user_metadata.active
-              },
-            
-            };
-            console.log("hola")
-            AsyncStorage.setItem('token', JSON.stringify(session.access_token));
-            dispatch(onLoginSuccess(data));
-            console.log("mensaje")
-          }
-          break;
-        case 'INITIAL_SESSION':
-          if (session) {
-            const { data, error } = await supabase.from('person').select('id').eq('user_id', session.user.id).single()
-            let sessionData = {
-              
-              user: {
-                lang: session.user.user_metadata.lang ?? 'es',
-                email: session.user.email,
-                id: session.user.id,
-                firstname: session.user.user_metadata.firstname,
-                lastname: session.user.user_metadata.lastname,
-                avatar: session.user.user_metadata.avatar,
-                role_id: session.user.user_metadata.role_id,
-                active: session.user.user_metadata.active,
-                person_id: data.id
-              }
-            
-            };
-            console.log(" " + "estooo")
-            AsyncStorage.setItem('token', JSON.stringify(session.access_token));
-            dispatch(onLoginSuccess(sessionData));
-            callback({ success: true });
-          } else {
-            callback({ success: false, message: 'Debe activar su cuenta enviada a su email!' });
-          }
-          break;
-        case 'SIGNED_OUT':
-          console.log("SIGNED OUT")
-          break;
-        default:
-          callback({ success: false, message: 'usuario o password invalidos!' });
-      }
-    })
-
+    console.log("ON LOGIN")
+    callback({success: true, message: 'jaja'})
   } catch (e) {
     callback({ success: false });
     console.log('ERROR: ' + e);
   }
 };
+
+
 
 export const register = (user, callback) => async (dispatch) => {
   try {
@@ -154,5 +96,3 @@ export const logout = (callback) => (dispatch) => {
     callback({ success: false });
   }
 };
-
-
