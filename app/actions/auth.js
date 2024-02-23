@@ -43,7 +43,7 @@ export const login = (login, callback) => async (dispatch) => {
           if (session) {
             let data = {
               user: {
-                lang: session.user.user_metadata.lang ?? 'es',
+                lang: session.user.user_metadata.lang ?? 'es', 
                 email: session.user.email,
                 id: session.user.id,
                 firstname: session.user.user_metadata.firstname,
@@ -51,16 +51,20 @@ export const login = (login, callback) => async (dispatch) => {
                 avatar: session.user.user_metadata.avatar,
                 role_id: session.user.user_metadata.role_id,
                 active: session.user.user_metadata.active
-              }
+              },
+            
             };
+            console.log("hola")
             AsyncStorage.setItem('token', JSON.stringify(session.access_token));
             dispatch(onLoginSuccess(data));
+            console.log("mensaje")
           }
           break;
         case 'INITIAL_SESSION':
           if (session) {
             const { data, error } = await supabase.from('person').select('id').eq('user_id', session.user.id).single()
             let sessionData = {
+              
               user: {
                 lang: session.user.user_metadata.lang ?? 'es',
                 email: session.user.email,
@@ -72,7 +76,9 @@ export const login = (login, callback) => async (dispatch) => {
                 active: session.user.user_metadata.active,
                 person_id: data.id
               }
+            
             };
+            console.log(" " + "estooo")
             AsyncStorage.setItem('token', JSON.stringify(session.access_token));
             dispatch(onLoginSuccess(sessionData));
             callback({ success: true });
