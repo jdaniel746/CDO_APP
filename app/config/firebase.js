@@ -19,15 +19,8 @@ const firebaseConfig = {
   messagingSenderId: MESSAGING_SENDER_ID,
   appId: APP_ID,
   measurementId: ''
-  /*apiKey: 'AIzaSyAj3LYrMKPZ4HPT4hIuqu-uNMbznfudad4',
-  authDomain: 'cdocaracas-ed2d3.firebaseapp.com',
-  projectId: 'cdocaracas-ed2d3',
-  storageBucket: 'cdocaracas-ed2d3.appspot.com',
-  messagingSenderId: '25084387666',
-  appId: '1:25084387666:web:715d06c2caa65720891a8b',
-  measurementId: ''*/
-
 };
+
 
 const app = initializeApp(firebaseConfig);
 /*const auth = initializeAuth(app, {
