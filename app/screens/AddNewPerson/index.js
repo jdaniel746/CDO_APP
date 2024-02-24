@@ -1,5 +1,6 @@
 import { Button, Header, Icon, Image, SafeAreaView, Text, TextInput, CardList } from '@components';
 import { BaseColor, BaseStyle, useTheme, Images } from '@config';
+import supabase from '../../config/supabase';
 // Load sample data
 import Spinner from 'react-native-loading-spinner-overlay';
 import React, { useEffect, useState } from 'react';
@@ -19,8 +20,60 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import Toast from 'react-native-toast-message';
 import UserIcon from '../../assets/images/user.png'
 
+
+
 const { fetchPerson, updatePerson } = PersonActions;
 //const minDate = dayjs().add(2, 'day').format('YYYY-MM-DD');
+
+function AddNew(props) {
+
+  const { navigation } = props;
+  const auth = useSelector((state) => state.auth);
+  const user = auth.user;
+  const person = useSelector((state) => state.person);
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const [avatar, setAvatar] = useState(user.avatar);
+  const dispatch = useDispatch();
+  const [birthdate, setBirthdate] = useState();
+  const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const showDateTimePicker = () => {
+    setIsDateTimePickerVisible(true);
+  };
+
+  const hideDateTimePicker = () => {
+    setIsDateTimePickerVisible(false);
+  };
+
+  const handleDatePicked = (date) => {
+    setBirthdate(dayjs(date).format('YYYY-MM-DD'));
+    hideDateTimePicker();
+  };
+
+  
+    
+
+  useEffect(() => {
+  }, [birthdate]);
+
+  useEffect(() => {
+  }, [person]);
+
+  const defaultContact = {
+            identify: '',
+            firstname: '',
+            lastname: '',
+            address: '', 
+            birthdate: '',
+            phone_code: '',
+            phone_number: '',
+            local_number: '',
+            local_code: '',
+};
+
+
 const profileValidationSchema = yup.object().shape({
   identify: yup.string().min(7, 'error.identify.min').max(8, 'error.identify.max'),
   firstname: yup
@@ -47,6 +100,7 @@ const profileValidationSchema = yup.object().shape({
   .test('len', 'error.code.length', val => val?.toString().length === 3)
   .required('error.code.required'),
 
+
   local_number: yup.number().typeError("error.phone.format")
   .positive("error.phone.positive")
   .integer("error.phone.integer")
@@ -58,119 +112,46 @@ const profileValidationSchema = yup.object().shape({
   .test('len', 'error.code.length', val => val?.toString().length === 3)
   .required('error.code.required'),
 
-  invited_by: yup
-  .string()
-  .required('error.firstname.required')
-  .min(3, 'error.firstname.min')
-  .max(15, 'error.firstname.max'),
+  
+  
 });
 
-const AddNew = (props) => {
-  const { navigation } = props;
-  const auth = useSelector((state) => state.auth);
-  const user = auth.user;
-  const person = useSelector((state) => state.person);
-  const { t } = useTranslation();
-  const { colors } = useTheme();
-  const [avatar, setAvatar] = useState(user.avatar);
-  const dispatch = useDispatch();
-  const [birthdate, setBirthdate] = useState();
-  const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const showDateTimePicker = () => {
-    setIsDateTimePickerVisible(true);
-  };
-
-  const hideDateTimePicker = () => {
-    setIsDateTimePickerVisible(false);
-  };
-
-  const handleDatePicked = (date) => {
-    setBirthdate(dayjs(date).format('YYYY-MM-DD'));
-    hideDateTimePicker();
-  };
-
-  useEffect(() => {
-  }, [birthdate]);
-
-  useEffect(() => {
-    if (!person.person) {
-      try {
-        setIsLoading(true);
-        dispatch(
-          fetchPerson(user.id, (response) => {
-            console.log('response:' + JSON.stringify(response));
-            setIsLoading(false);
-            if(!response.success){
-              Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: response.message
-              });
-            }
-          })
-        );
-      } catch (e) {
-        setIsLoading(false);
-        console.log('ERROR PERSONA :' + e);
+async function handleSubmit( values, { resetForm }) {
+  const result = await supabase.from("person").select();
+    console.log(result)
+  const { identify, firstname, lastname,
+    address, phone_code, phone_number, local_number,local_code } = values;
+  try {
+      const { error } = await supabase.from("person").insert({ identify, firstname, lastname,
+      address, phone_code, phone_number, local_number,local_code});
+      setIsLoading(false);
+      if (error) {
+          throw error;
       }
-    }
-  }, [person]);
-
-  const handlerUpdate = (form) => {
-    setIsLoading(true);
-    form.id = user.id;
-    form.birthdate = birthdate;
-    dispatch(
-      updatePerson(form, (response) => {
-        console.log('responseU:' + JSON.stringify(response));
-        setIsLoading(false);
-        if (response.success) {
-          Toast.show({
-            type: 'success',
-            text1: 'Exito',
-            text2: ' Registro Exitoso!'
-          });
-        } else {
-          Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: 'No se pudo registrar!'
-          });
-        }
-      })
-    );
-  };
-
- 
+    Toast.show({
+      type: 'success',
+      text1: 'Exito',
+      text2: ' Registro Exitoso!'
+    });
+    navigation.navigate('Assistance')
+    resetForm();
+} catch (error) {
+    console.log("Error occurred", { error });
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: 'No se pudo registrar!'
+    });
+}
+}
 
   return (
-    <>
-      <Spinner visible={isLoading} />
-      {person.person && (
         <Formik
-          initialValues={{
-            identify: '',
-            firstname: '',
-            lastname: '',
-            address: '', 
-            birthdate: '',
-            phone_code: '',
-            phone_number: '',
-            local_number: '',
-            local_code: '',
-            invited_by: ''
-
-           
-            /*code_local: '',
-            phone_local: '',
-            invitedBy: '',*/
-          }}
+           initialValues={defaultContact}
+          enableReinitialize
           validationSchema={profileValidationSchema}
-          onSubmit={(values) => {
-            handlerUpdate(values);
-          }}>
+          onSubmit={handleSubmit}
+          >
           {({ handleSubmit, setFieldValue, handleChange, handleBlur, values, errors }) => (
             <SafeAreaView style={BaseStyle.safeAreaView} edges={['right', 'top', 'left']}>
               <DateTimePicker
@@ -265,30 +246,8 @@ const AddNew = (props) => {
                     value={values.address}
                     selectionColor={colors.primary}
                   />
-                  <View style={styles.contentTitle}>
-                    <Text headline semibold>
-                      {t('input_birthdate')}
-                    </Text>
-                  </View>
-                  <TextInput
-                    style={BaseStyle.textInput}
-                    onChangeText={() => {}}
-                    name="birthdate"
-                    onBlur={handleBlur('birthdate')}
-                    errors={errors.birthdate}
-                    autoCorrect={false}
-                    placeholder={t('input_birthdate')}
-                    placeholderTextColor={BaseColor.grayColor}
-                    value={birthdate ?? values.birthdate}
-                    selectionColor={colors.primary}
-                    editable={false}
-                    icon={
-                      <TouchableOpacity onPress={showDateTimePicker}>
-                        <Icon name="calendar" size={25} color={BaseColor.grayColor} />
-                      </TouchableOpacity>
-                    }
-                  />
-
+                  
+                  
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
                       {t('input_phone')}
@@ -352,24 +311,11 @@ const AddNew = (props) => {
                       />
                     </View>
                   </View>
+              
+                 
 
-                  <View style={styles.contentTitle}>
-                    <Text headline semibold>
-                      {t('invited_by')}
-                    </Text>
-                  </View>
-                  <TextInput
-                    style={BaseStyle.textInput}
-                    onChangeText={handleChange('invited_by')}
-                    name="invited_by"
-                    onBlur={handleBlur('invited_by')}
-                    errors={errors.invited_by}
-                    autoCorrect={false}
-                    placeholder={t('invited_by')}
-                    placeholderTextColor={BaseColor.grayColor}
-                    value={values.invited_by}
-                    selectionColor={colors.primary}
-                  />
+
+          
 
                  
 
@@ -392,8 +338,8 @@ const AddNew = (props) => {
             </SafeAreaView>
           )}
         </Formik>
-      )}
-    </>
+        
+    
   );
 };
 
