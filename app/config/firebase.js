@@ -20,6 +20,7 @@ const firebaseConfig = {
   appId: APP_ID,
   measurementId: ''
   
+  
 };
 
 

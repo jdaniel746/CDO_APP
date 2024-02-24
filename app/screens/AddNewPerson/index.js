@@ -61,7 +61,7 @@ function AddNew(props) {
   useEffect(() => {
   }, [person]);
 
-  const defaultContact = {
+  const defaultForm = {
             identify: '',
             firstname: '',
             lastname: '',
@@ -147,7 +147,7 @@ async function handleSubmit( values, { resetForm }) {
 
   return (
         <Formik
-           initialValues={defaultContact}
+           initialValues={defaultForm}
           enableReinitialize
           validationSchema={profileValidationSchema}
           onSubmit={handleSubmit}
