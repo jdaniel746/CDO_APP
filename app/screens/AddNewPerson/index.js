@@ -322,12 +322,6 @@ async function handleSubmit( values, { resetForm }) {
                  
 
                   
-                  
-                  
-                  
-                  
-
-                  
                 </View>
               </ScrollView>
               <View style={{ padding: 20 }}>
