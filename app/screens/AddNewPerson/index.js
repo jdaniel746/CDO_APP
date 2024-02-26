@@ -22,6 +22,7 @@ import UserIcon from '../../assets/images/user.png'
 
 
 
+
 const { fetchPerson, updatePerson } = PersonActions;
 //const minDate = dayjs().add(2, 'day').format('YYYY-MM-DD');
 
@@ -38,6 +39,11 @@ function AddNew(props) {
   const [birthdate, setBirthdate] = useState();
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [groups, setGroups] = useState([])
+  const [grupo, setGrupo] = useState(null);
+  const [leaders, setLeaders] = useState([])
+ 
+
 
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
@@ -60,6 +66,46 @@ function AddNew(props) {
 
   useEffect(() => {
   }, [person]);
+
+  useEffect(() => {
+    async function fetch() {
+      setIsLoading(true)
+      let { data, error } = await supabase
+        .from('groups')
+        .select(' id, name, firstname')
+        .contains('leaders', [auth.user.person_id.toString()])
+
+      if(data.length > 0){
+        let groupList = data.map((gr) => {
+          return { value: gr.id, text: gr.name, leaders: gr.leaders}
+        })
+        setGroups(groupList)
+        setGrupo(groupList[0])
+        console.log(groupList)
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No tienes grupos asignados!'
+        });
+        navigation.navigate('Home')
+      }
+      let { data: dataEvent, error2 } = await supabase
+        .from('events')
+        .select(' id, name')
+
+      if(dataEvent.length > 0) {
+        let events = dataEvent.map((e) => {
+          return { value: e.id, text: e.name}
+        })
+        setEventList(events)
+        setEvent(events[0])
+      }
+      setIsLoading(false)
+    }
+    fetch()
+  }, []);
+
 
   const defaultForm = {
             identify: '',
@@ -118,7 +164,7 @@ const profileValidationSchema = yup.object().shape({
 
 async function handleSubmit( values, { resetForm }) {
   const result = await supabase.from("person").select();
-    console.log(result)
+    //console.log(result)
   const { identify, firstname, lastname,
     address, phone_code, phone_number, local_number,local_code } = values;
   try {

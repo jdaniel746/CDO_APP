@@ -353,7 +353,9 @@
 	"Assistance": "Asistencia",
 	"Sign Out": "Cerrar Seccion",
 
-
+    "error.identify.required": "Debe ingresar un numero de cedula",
+	"error.identify.min": "La cedula debe tener minimo 7 caracteres",
+	"error.identify.max": "La cedula debe tener maximo 8 caracteres",
 	"error.email.required": "Debe ingresar un correo electronico",
 	"error.email.invalid": "Ingrese un correo valido",
 	"error.password.required": "Debe ingresar una contrasena",

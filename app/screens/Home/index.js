@@ -7,6 +7,7 @@ import { FlatList, View } from 'react-native';
 import styles from './styles';
 import { GroupsActions } from '@actions';
 import { useDispatch, useSelector } from 'react-redux';
+import Toast from 'react-native-toast-message';
 
 const { retrieveGroupsByRed } = GroupsActions;
 
@@ -21,11 +22,25 @@ const PHome = (props) => {
 
   useEffect(() => {
     console.log('Gruposs: ' + JSON.stringify(selector));
-    if(selector.groups.length > 0) {
+    if(selector.groups && selector.groups.length > 0) {
       setTabs(selector.groups)
       setTab(selector.groups[0])
+      
+    }else {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'No tienes ningun grupo asignado!'
+      });
+
     }
+      
   }, [selector.groups]);
+  
+   
+
+
+  
 
 
   const data = [

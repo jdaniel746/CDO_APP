@@ -280,6 +280,7 @@ const Navigator = (props) => {
 
   const init = async function(session) {
     const { data, error } = await supabase.from('person').select('id').eq('user_id', session.user.id).single()
+    console.log(data)
     let sessionData = {
       user: {
         lang: session.user.user_metadata.lang ?? 'es',

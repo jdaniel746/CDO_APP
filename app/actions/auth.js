@@ -31,11 +31,12 @@ export const login = (login, callback) => async (dispatch) => {
       email: login.user,
       password: login.password
     })
-
+    console.log(error)
+    if(error) throw error
     console.log("ON LOGIN")
     callback({success: true, message: 'jaja'})
   } catch (e) {
-    callback({ success: false });
+    callback({ success: false, message: 'usuario o password invalidos!' });
     console.log('ERROR: ' + e);
   }
 };

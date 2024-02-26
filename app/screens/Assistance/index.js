@@ -92,10 +92,16 @@ const AssistanceGroup = () => {
         setLeaders(data)
       }
     }
+    
     if(grupo) {
       fetchLeaders()
     }
   }, [grupo]);
+
+ 
+
+
+
 
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
