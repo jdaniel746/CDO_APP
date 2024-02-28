@@ -4,6 +4,7 @@ import { parseHexTransparency } from "@utils";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
 import styles from "./styles";
 import { getFirestore, collection, onSnapshot , getDoc, query, where} from "firebase/firestore";
 
@@ -14,6 +15,7 @@ const ListaDePredicas = (props) => {
     const { navigation } = props;
     const { colors } = useTheme();
     const { t } = useTranslation();
+    const [isLoading, setIsLoading] = useState(false);
     const db = getFirestore();
     const dbRef = collection(db, "pitch");
 
@@ -31,6 +33,10 @@ const ListaDePredicas = (props) => {
 }, [])
     
     return (
+        <>
+        {isLoading && (
+        <Spinner visible={isLoading} />
+      )}
         <SafeAreaView style={BaseStyle.safeAreaView}>
             <Header
                 title={t("Predicas")}
@@ -302,6 +308,7 @@ const ListaDePredicas = (props) => {
             </ScrollView>
             
         </SafeAreaView>
+        </>
     );
 }
 export default ListaDePredicas

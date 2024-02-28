@@ -52,7 +52,7 @@ const AssistanceGroup = () => {
       let { data, error } = await supabase
         .from('groups')
         .select(' id, name, leaders')
-        .contains('leaders', [auth.user.person_id.toString()])
+        //.contains('leaders', [auth.user.person_id.toString()])
 
       if(data.length > 0){
         let groupList = data.map((gr) => {
@@ -60,6 +60,7 @@ const AssistanceGroup = () => {
         })
         setGroups(groupList)
         setGrupo(groupList[0])
+        console.log(groupList)
       } else {
         Toast.show({
           type: 'error',
@@ -90,6 +91,7 @@ const AssistanceGroup = () => {
         .in('id', groups.find((g) => g.value === grupo.value).leaders)
       if(data && data.length > 0){
         setLeaders(data)
+        console.log(data)
       }
     }
     

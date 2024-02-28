@@ -19,6 +19,7 @@ import { storage } from '@config/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import Toast from 'react-native-toast-message';
 import UserIcon from '../../assets/images/user.png'
+import { SelectModal } from '../../components';
 
 
 
@@ -41,6 +42,7 @@ function AddNew(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [groups, setGroups] = useState([])
   const [grupo, setGrupo] = useState(null);
+  const [person_id, setPerson_id] = useState([])
   const [leaders, setLeaders] = useState([])
  
 
@@ -71,42 +73,44 @@ function AddNew(props) {
     async function fetch() {
       setIsLoading(true)
       let { data, error } = await supabase
-        .from('groups')
-        .select(' id, name, firstname')
-        .contains('leaders', [auth.user.person_id.toString()])
+        .from('person_group')
+        .select(' id, person_id')
+        
 
       if(data.length > 0){
         let groupList = data.map((gr) => {
-          return { value: gr.id, text: gr.name, leaders: gr.leaders}
+          return { value: gr.id, text: gr.person_id, person_id: gr.person_id}
         })
         setGroups(groupList)
         setGrupo(groupList[0])
         console.log(groupList)
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: 'No tienes grupos asignados!'
-        });
-        navigation.navigate('Home')
-      }
-      let { data: dataEvent, error2 } = await supabase
-        .from('events')
-        .select(' id, name')
-
-      if(dataEvent.length > 0) {
-        let events = dataEvent.map((e) => {
-          return { value: e.id, text: e.name}
-        })
-        setEventList(events)
-        setEvent(events[0])
-      }
-      setIsLoading(false)
+      } 
+      
     }
     fetch()
   }, []);
 
+  useEffect(() => {
+    async function fetchLeaders() {
+      let {data, errors3} = await supabase.from('person').select('id, firstname, lastname, photo')
+        .in('id', groups.find((g) => g.value === grupo.value).person_id)
+      if(data && data.length > 0){
+        setLeaders(data)
+        console.log(data)
+      }
+    }
+    
+    if(grupo) {
+      fetchLeaders()
+    }
+  }, [grupo]);
 
+ 
+    
+    
+    
+    
+    
   const defaultForm = {
             identify: '',
             firstname: '',
@@ -357,16 +361,21 @@ async function handleSubmit( values, { resetForm }) {
                       />
                     </View>
                   </View>
+                  <View style={styles.contentTitle}>
+                    <Text headline semibold>
+                      {t('invited_by')}
+                    </Text>
+                    
+                  </View>
+                  <SelectModal
+                  options={groups}
+                  selected={grupo}
+                  onApply={(item) => setLeaders(item)}
+                  label="personas"
+                />
+
               
-                 
-
-
-          
-
-                 
-
-                 
-
+    
                   
                 </View>
               </ScrollView>
