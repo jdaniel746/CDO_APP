@@ -24,6 +24,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import supabase from "../../config/supabase";
 import Spinner from "react-native-loading-spinner-overlay";
 import Toast from "react-native-toast-message";
+import member from '../../reducers/member';
 
 
 const AssistanceGroup = () => {
@@ -34,6 +35,7 @@ const AssistanceGroup = () => {
   const date = dayjs(new Date()).format('DD-MMM-YYYY');
   const [grupo, setGrupo] = useState(null);
   const [event, setEvent] = useState(null);
+  const members = useSelector((state) => state.members);
   const [assistants, setAssistants] = useState([]);
   const auth = useSelector((state) => state.auth);
   const [offerUSD, setOfferUSD] = useState('0');
@@ -52,7 +54,7 @@ const AssistanceGroup = () => {
       let { data, error } = await supabase
         .from('groups')
         .select(' id, name, leaders')
-        //.contains('leaders', [auth.user.person_id.toString()])
+        .contains('leaders', [auth.user.person_id.toString()])
 
       if(data.length > 0){
         let groupList = data.map((gr) => {
@@ -85,6 +87,8 @@ const AssistanceGroup = () => {
     fetch()
   }, []);
 
+ 
+
   useEffect(() => {
     async function fetchLeaders() {
       let {data, errors3} = await supabase.from('person').select('id, firstname, lastname, photo')
@@ -93,8 +97,8 @@ const AssistanceGroup = () => {
         setLeaders(data)
         console.log(data)
       }
+      setIsLoading(false)
     }
-    
     if(grupo) {
       fetchLeaders()
     }
@@ -218,7 +222,8 @@ const AssistanceGroup = () => {
                             <PButtonAddUser
                               onPress={() =>
                                 navigation.navigate('PeopleSelect', {
-                                  members: assistants
+                                  members: assistants,
+                                  groupId: grupo.value
                                 })
                               }
                             />
@@ -238,7 +243,8 @@ const AssistanceGroup = () => {
                       <PButtonAddUser
                         onPress={() =>
                           navigation.navigate('PeopleSelect', {
-                            members: PTeamMembersInCreate
+                            members: assistants,
+                            groupId: grupo.value
                           })
                         }
                       />

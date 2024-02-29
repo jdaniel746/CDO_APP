@@ -17,7 +17,9 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { PButtonAddUser } from "../../components";
+import { PButtonAddUser } from '../../components';
+import Spinner from "react-native-loading-spinner-overlay";
+import supabase from '../../config/supabase';
 const { setSelectedMembers } = MemberActions;
 
 export default function PSelectAssignee() {
@@ -25,8 +27,9 @@ export default function PSelectAssignee() {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const [keyword, setKeyword] = useState('');
-  const [friends, setFriends] = useState(FFriends);
+  const [friends, setFriends] = useState([]);
   const route = useRoute();
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -42,6 +45,32 @@ export default function PSelectAssignee() {
     }
   }, [route?.params?.members]);
 
+  useEffect(() => {
+    async function group() {
+        let { data: personGroup, error2 } = await supabase
+        .from('person_group')
+        .select('person_id')
+        .eq('group_id', route?.params?.groupId)
+  
+        if(personGroup.length > 0) {
+          let {data, errors3} = await supabase.from('person').select('id, firstname, lastname, photo')
+            .in(
+              'id',
+              personGroup.map((p) => p.person_id.toString())
+            );
+            if(data && data.length > 0 ) setFriends(data.map((item, index) => ({
+              ...item,
+              isSelect: false
+            })))
+        }
+    }
+    if (route?.params?.groupId) {
+      group()
+    }
+   console.log(route?.params)
+   
+  }, [route?.params?.groupId]);
+
   const filterCategory = (text) => {
     setKeyword(text);
     if (text) {
@@ -54,14 +83,16 @@ export default function PSelectAssignee() {
   };
 
   const onSelect = (user) => {
+    console.log(user)
     setFriends(
-      friends.map((item) => (item.id == user.id ? { ...item, isSelect: !user.isSelect } : item))
+      friends.map((item) => (item.id === user.id ? { ...item, isSelect: !user.isSelect } : item))
     );
   };
 
   const onSave = () => {
+    console.log("save "+JSON.stringify(friends.filter((item) => item.isSelect )))
     dispatch(
-      setSelectedMembers(friends, (response) => {
+      setSelectedMembers(friends.filter((item) => item.isSelect ), (response) => {
         console.log('response:' + JSON.stringify(response));
       })
     );
@@ -69,6 +100,10 @@ export default function PSelectAssignee() {
   };
 
   return (
+    <>
+      {isLoading && (
+        <Spinner visible={isLoading} />
+      )}
     <SafeAreaView style={BaseStyle.safeAreaView} edges={['right', 'top', 'left']}>
       <Header
         title={t('select_assignee')}
@@ -118,8 +153,8 @@ export default function PSelectAssignee() {
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
             <ListTextButton
-              image={item.image}
-              name={item.name}
+              image={item.photo}
+              name={item.firstname + " " +item.lastname}
               description={item.total}
               componentRight={
                 item.isSelect ? (
@@ -154,5 +189,6 @@ export default function PSelectAssignee() {
         />
       </View>
     </SafeAreaView>
+    </>
   );
 }

@@ -6,6 +6,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import React, { useEffect, useState } from 'react';
 import { Platform, ScrollView, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { PersonActions } from '@actions';
@@ -44,9 +45,9 @@ function AddNew(props) {
   const [grupo, setGrupo] = useState(null);
   const [person_id, setPerson_id] = useState([])
   const [leaders, setLeaders] = useState([])
+  const [friends, setFriends] = useState([]);
+  const route = useRoute();
  
-
-
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
   };
@@ -73,42 +74,54 @@ function AddNew(props) {
     async function fetch() {
       setIsLoading(true)
       let { data, error } = await supabase
-        .from('person_group')
-        .select(' id, person_id')
-        
+        .from('groups')
+        .select(' id, name, leaders')
+        .contains('leaders', [auth.user.person_id.toString()])
 
       if(data.length > 0){
         let groupList = data.map((gr) => {
-          return { value: gr.id, text: gr.person_id, person_id: gr.person_id}
+          return { value: gr.id, text: gr.name, leaders: gr.leaders}
         })
         setGroups(groupList)
         setGrupo(groupList[0])
         console.log(groupList)
       } 
-      
     }
     fetch()
   }, []);
 
+
   useEffect(() => {
-    async function fetchLeaders() {
-      let {data, errors3} = await supabase.from('person').select('id, firstname, lastname, photo')
-        .in('id', groups.find((g) => g.value === grupo.value).person_id)
-      if(data && data.length > 0){
-        setLeaders(data)
-        console.log(data)
-      }
+    async function group() {
+        let { data: personGroup, error2 } = await supabase
+        .from('person_group')
+        .select('person_id')
+        .eq('group_id', person_id)
+  
+        if(personGroup.length > 0) {
+          let {data, errors3} = await supabase.from('person').select('id, firstname, lastname, photo')
+            .in(
+              'id',
+              personGroup.map((p) => p.person_id.toString())
+            );
+            setLeaders(data)
+        console.log(data+ " " +" hola")
+        }
+        setIsLoading(false)
     }
-    
     if(grupo) {
-      fetchLeaders()
+      group()
     }
   }, [grupo]);
 
  
-    
-    
-    
+   
+
+ 
+
+
+
+  
     
     
   const defaultForm = {
@@ -370,7 +383,7 @@ async function handleSubmit( values, { resetForm }) {
                   <SelectModal
                   options={groups}
                   selected={grupo}
-                  onApply={(item) => setLeaders(item)}
+                  onApply={(item) => setGroups(item)}
                   label="personas"
                 />
 
