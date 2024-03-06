@@ -20,6 +20,7 @@ import { useDispatch } from 'react-redux';
 import { PButtonAddUser } from '../../components';
 import Spinner from "react-native-loading-spinner-overlay";
 import supabase from '../../config/supabase';
+import member from '../../reducers/member';
 const { setSelectedMembers } = MemberActions;
 
 export default function PSelectAssignee() {
@@ -42,6 +43,7 @@ export default function PSelectAssignee() {
           isSelect: ids.includes(item.id)
         }))
       );
+      console.log("este valor 1 "+ JSON.stringify(route?.params))
     }
   }, [route?.params?.members]);
 
@@ -67,7 +69,7 @@ export default function PSelectAssignee() {
     if (route?.params?.groupId) {
       group()
     }
-   console.log(route?.params)
+   console.log("este valor 2 "+ JSON.stringify(route?.params))
    
   }, [route?.params?.groupId]);
 
@@ -132,7 +134,7 @@ export default function PSelectAssignee() {
           }}>
           <PButtonAddUser
             onPress={() =>
-              navigation.navigate('AddNewPerson')
+              navigation.navigate('AddNewPerson', {group: route?.params?.groupId, members: route?.params?.members})
             }/>
           <TextInput
             onChangeText={filterCategory}

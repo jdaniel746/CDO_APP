@@ -1,15 +1,17 @@
-import { Button, Header, Icon, Image, SafeAreaView, Text, TextInput, CardList } from '@components';
+import { Button, Header, Icon, Image, SafeAreaView, Text, TextInput, CardList, ListTextButton, Tag } from '@components';
 import { BaseColor, BaseStyle, useTheme, Images } from '@config';
 import supabase from '../../config/supabase';
 // Load sample data
 import Spinner from 'react-native-loading-spinner-overlay';
 import React, { useEffect, useState } from 'react';
-import { Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+import { FFriends } from '@data';
+import { FlatList, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { PersonActions } from '@actions';
+import { PButtonAddUser } from '../../components';
 import { useDispatch, useSelector } from 'react-redux';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import * as yup from 'yup';
@@ -21,7 +23,10 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import Toast from 'react-native-toast-message';
 import UserIcon from '../../assets/images/user.png'
 import { SelectModal } from '../../components';
-
+import group from '../../reducers/group';
+import { object } from 'prop-types';
+import { MemberActions } from '@actions';
+const { setSelectedMembers } = MemberActions;
 
 
 
@@ -37,17 +42,22 @@ function AddNew(props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [avatar, setAvatar] = useState(user.avatar);
-  const dispatch = useDispatch();
   const [birthdate, setBirthdate] = useState();
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [groups, setGroups] = useState([])
-  const [grupo, setGrupo] = useState(null);
+  //const [idValor, setIdValores] = useState([])
+  // const [grupo] = useState(route?.params?.group);
   const [person_id, setPerson_id] = useState([])
-  const [leaders, setLeaders] = useState([])
+  const [personas, setPersonas] = useState([])
+  const [idValor, setIdValores] = useState(null);
+  const [event, setEvent] = useState(null);
   const [friends, setFriends] = useState([]);
+  const [friend, setFriend] = useState(null);
   const route = useRoute();
- 
+  const [groupId, setGroupId] = useState([]);
+  const [keyword, setKeyword] = useState('');
+
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
   };
@@ -61,9 +71,6 @@ function AddNew(props) {
     hideDateTimePicker();
   };
 
-  
-    
-
   useEffect(() => {
   }, [birthdate]);
 
@@ -71,150 +78,142 @@ function AddNew(props) {
   }, [person]);
 
   useEffect(() => {
-    async function fetch() {
-      setIsLoading(true)
-      let { data, error } = await supabase
-        .from('groups')
-        .select(' id, name, leaders')
-        .contains('leaders', [auth.user.person_id.toString()])
-
-      if(data.length > 0){
-        let groupList = data.map((gr) => {
-          return { value: gr.id, text: gr.name, leaders: gr.leaders}
-        })
-        setGroups(groupList)
-        setGrupo(groupList[0])
-        console.log(groupList)
-      } 
-    }
-    fetch()
-  }, []);
-
-
-  useEffect(() => {
     async function group() {
-        let { data: personGroup, error2 } = await supabase
+
+      let { data: personGroup, error2 } = await supabase
         .from('person_group')
         .select('person_id')
-        .eq('group_id', person_id)
-  
-        if(personGroup.length > 0) {
-          let {data, errors3} = await supabase.from('person').select('id, firstname, lastname, photo')
-            .in(
-              'id',
-              personGroup.map((p) => p.person_id.toString())
-            );
-            setLeaders(data)
-        console.log(data+ " " +" hola")
-        }
-        setIsLoading(false)
+        .eq('group_id', route?.params?.group)
+
+      if (personGroup.length > 0) {
+        let { data, errors3 } = await supabase.from('person').select('id, firstname, lastname, photo')
+          .in(
+            'id',
+            personGroup.map((p) => p.person_id.toString())
+          );
+
+
+        if (data && data.length > 0)
+          setFriends(data.map((p) => {
+            return { value: p.id, text: p.firstname, lastname: p.lastname }
+          }))
+        setFriend(data[0])
+        console.log(data)
+      }
     }
-    if(grupo) {
+    if (route?.params?.group) {
       group()
     }
-  }, [grupo]);
+    console.log(route?.params?.group)
 
- 
-   
+  }, [route?.params?.group]);
 
- 
-
-
-
-  
-    
-    
   const defaultForm = {
-            identify: '',
-            firstname: '',
-            lastname: '',
-            address: '', 
-            birthdate: '',
-            phone_code: '',
-            phone_number: '',
-            local_number: '',
-            local_code: '',
-};
+    identify: '',
+    firstname: '',
+    lastname: '',
+    address: '',
+    birthdate: '',
+    phone_code: '',
+    phone_number: '',
+    local_number: '',
+    local_code: '',
+  };
 
 
-const profileValidationSchema = yup.object().shape({
-  identify: yup.string().min(7, 'error.identify.min').max(8, 'error.identify.max'),
-  firstname: yup
-    .string()
-    .required('error.firstname.required')
-    .min(3, 'error.firstname.min')
-    .max(15, 'error.firstname.max'),
+  const profileValidationSchema = yup.object().shape({
+    identify: yup.string().min(7, 'error.identify.min').max(8, 'error.identify.max'),
+    firstname: yup
+      .string()
+      .required('error.firstname.required')
+      .min(3, 'error.firstname.min')
+      .max(15, 'error.firstname.max'),
     //invitedBy: yup.string().min(3, 'error.middlename.min').max(20, 'error.middlename.max'),
-  lastname: yup
-    .string()
-    .required('error.lastname.required')
-    .min(3, 'error.lastname.min')
-    .max(15, 'error.lastname.max'),
-  address: yup.string().min(10, 'error.address.min').max(100, 'error.address.max'),
-  birthdate: yup.date(),
-  phone_number: yup.number().typeError("error.phone.format")
-  .positive("error.phone.positive")
-  .integer("error.phone.integer")
-  .test('len', 'error.phone.length', val => val?.toString().length === 7)
-  .required('error.phone.required'),
-  phone_code: yup.number().typeError("That doesn't look like a phone number")
-  .positive("A phone number can't start with a minus")
-  .integer("A phone number can't include a decimal point")
-  .test('len', 'error.code.length', val => val?.toString().length === 3)
-  .required('error.code.required'),
+    lastname: yup
+      .string()
+      .required('error.lastname.required')
+      .min(3, 'error.lastname.min')
+      .max(15, 'error.lastname.max'),
+    address: yup.string().min(10, 'error.address.min').max(100, 'error.address.max'),
+    birthdate: yup.date(),
+    phone_number: yup.number().typeError("error.phone.format")
+      .positive("error.phone.positive")
+      .integer("error.phone.integer")
+      .test('len', 'error.phone.length', val => val?.toString().length === 7)
+      .required('error.phone.required'),
+    phone_code: yup.number().typeError("That doesn't look like a phone number")
+      .positive("A phone number can't start with a minus")
+      .integer("A phone number can't include a decimal point")
+      .test('len', 'error.code.length', val => val?.toString().length === 3)
+      .required('error.code.required'),
 
 
-  local_number: yup.number().typeError("error.phone.format")
-  .positive("error.phone.positive")
-  .integer("error.phone.integer")
-  .test('len', 'error.phone.length', val => val?.toString().length === 7)
-  .required('error.phone.required'),
-  local_code: yup.number().typeError("That doesn't look like a phone number local")
-  .positive("A phone number can't start with a minus")
-  .integer("A phone number can't include a decimal point")
-  .test('len', 'error.code.length', val => val?.toString().length === 3)
-  .required('error.code.required'),
+    local_number: yup.number().typeError("error.phone.format")
+      .positive("error.phone.positive")
+      .integer("error.phone.integer")
+      .test('len', 'error.phone.length', val => val?.toString().length === 7)
+      .required('error.phone.required'),
+    local_code: yup.number().typeError("That doesn't look like a phone number local")
+      .positive("A phone number can't start with a minus")
+      .integer("A phone number can't include a decimal point")
+      .test('len', 'error.code.length', val => val?.toString().length === 3)
+      .required('error.code.required'),
 
-  
-  
-});
+  });
 
-async function handleSubmit( values, { resetForm }) {
-  const result = await supabase.from("person").select();
-    //console.log(result)
-  const { identify, firstname, lastname,
-    address, phone_code, phone_number, local_number,local_code } = values;
-  try {
-      const { error } = await supabase.from("person").insert({ identify, firstname, lastname,
-      address, phone_code, phone_number, local_number,local_code});
+  async function handleSubmit(values, { resetForm }) {
+    //const result = await supabase.from("person").select();
+    const { identify, firstname, lastname,
+      address, phone_code, phone_number, local_number, local_code } = values;
+    try {
+      let { data: personRes, error } = await supabase.from("person").insert({
+        identify, firstname, lastname,
+        address, phone_code, phone_number, local_number, local_code
+      })
+      .select('id')
+      console.log(error)
+
+      if (personRes.length > 0) {
+        const { data, error1 } = await supabase.from('person_group')
+          .insert([ { person_id: personRes[0].id,
+          group_id: parseInt(route?.params?.group )}])
+          console.log(error1 +" error1 ")
+
+      }
       setIsLoading(false);
       if (error) {
-          throw error;
+        throw error;
       }
-    Toast.show({
-      type: 'success',
-      text1: 'Exito',
-      text2: ' Registro Exitoso!'
-    });
-    navigation.navigate('Assistance')
-    resetForm();
-} catch (error) {
-    console.log("Error occurred", { error });
-    Toast.show({
-      type: 'error',
-      text1: 'Error',
-      text2: 'No se pudo registrar!'
-    });
-}
-}
+      Toast.show({
+        type: 'success',
+        text1: 'Exito',
+        text2: ' Registro Exitoso!'
+      });
+      console.log("valores route"+JSON.stringify(route?.params))
+      navigation.navigate('PeopleSelect', {group: route?.params?.group, members: route?.params?.members})
+      resetForm();
+
+    } catch (error) {
+      console.log(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'No se pudo registrar!'
+      });
+    }
+  }
+
+
 
   return (
+    <>
+      {friends && (
         <Formik
-           initialValues={defaultForm}
+          initialValues={defaultForm}
           enableReinitialize
           validationSchema={profileValidationSchema}
           onSubmit={handleSubmit}
-          >
+        >
           {({ handleSubmit, setFieldValue, handleChange, handleBlur, values, errors }) => (
             <SafeAreaView style={BaseStyle.safeAreaView} edges={['right', 'top', 'left']}>
               <DateTimePicker
@@ -233,13 +232,13 @@ async function handleSubmit( values, { resetForm }) {
                 onPressLeft={() => {
                   navigation.goBack();
                 }}
-                onPressRight={() => {}}
+                onPressRight={() => { }}
               />
               <ScrollView>
                 <View style={styles.contain}>
                   {/*<View><Image source={image} style={styles.thumb} /></View>*/}
-                  
-                  
+
+
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
                       {t('identify')}
@@ -309,8 +308,8 @@ async function handleSubmit( values, { resetForm }) {
                     value={values.address}
                     selectionColor={colors.primary}
                   />
-                  
-                  
+
+
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
                       {t('input_phone')}
@@ -319,6 +318,7 @@ async function handleSubmit( values, { resetForm }) {
 
                   <View style={{ flexDirection: 'row', marginTop: 10 }}>
                     <View style={{ flex: 3 }}>
+                  
                       <TextInput
                         onChangeText={handleChange('phone_code')}
                         placeholder={t('phone_code')}
@@ -374,22 +374,7 @@ async function handleSubmit( values, { resetForm }) {
                       />
                     </View>
                   </View>
-                  <View style={styles.contentTitle}>
-                    <Text headline semibold>
-                      {t('invited_by')}
-                    </Text>
-                    
-                  </View>
-                  <SelectModal
-                  options={groups}
-                  selected={grupo}
-                  onApply={(item) => setGroups(item)}
-                  label="personas"
-                />
 
-              
-    
-                  
                 </View>
               </ScrollView>
               <View style={{ padding: 20 }}>
@@ -400,8 +385,8 @@ async function handleSubmit( values, { resetForm }) {
             </SafeAreaView>
           )}
         </Formik>
-        
-    
+      )}
+    </>
   );
 };
 
