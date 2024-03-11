@@ -34,7 +34,6 @@ const AssistanceGroup = () => {
   const route = useRoute();
   const date = dayjs(new Date()).format('DD-MMM-YYYY');
   const [grupo, setGrupo] = useState(null);
-  const [event, setEvent] = useState(null);
   const members = useSelector((state) => state.members);
   const [assistants, setAssistants] = useState([]);
   const auth = useSelector((state) => state.auth);
@@ -45,6 +44,7 @@ const AssistanceGroup = () => {
   const [dateAssistance, setDateAssistance] = useState(date)
   const [groups, setGroups] = useState([])
   const [eventList, setEventList] = useState([])
+  const [event, setEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [leaders, setLeaders] = useState([])
 
@@ -105,10 +105,6 @@ const AssistanceGroup = () => {
   }, [grupo]);
 
  
-
-
-
-
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
   };

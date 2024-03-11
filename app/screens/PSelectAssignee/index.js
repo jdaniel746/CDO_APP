@@ -44,6 +44,7 @@ export default function PSelectAssignee() {
         }))
       );
       console.log("este valor 1 "+ JSON.stringify(route?.params))
+      console.log("miembros  "+ JSON.stringify(members))
     }
   }, [route?.params?.members]);
 
@@ -101,6 +102,11 @@ export default function PSelectAssignee() {
     navigation.goBack();
   };
 
+  const send = () => {
+    console.log(route?.params?.groupId +"nav "+ JSON.stringify(friends))
+              navigation.navigate('AddNewPerson', {group: route?.params?.groupId, members: friends})
+  }
+
   return (
     <>
       {isLoading && (
@@ -134,8 +140,9 @@ export default function PSelectAssignee() {
           }}>
           <PButtonAddUser
             onPress={() =>
-              navigation.navigate('AddNewPerson', {group: route?.params?.groupId, members: route?.params?.members})
+              send()
             }/>
+            
           <TextInput
             onChangeText={filterCategory}
             placeholder={t('name_username_or_email')}

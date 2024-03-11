@@ -12,14 +12,21 @@ import { getStorage } from 'firebase/storage';
 import { API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID } from "@env"
 
 const firebaseConfig = {
-  apiKey: API_KEY,
+  /*apiKey: API_KEY,
   authDomain: AUTH_DOMAIN,
   projectId: PROJECT_ID,
   storageBucket: STORAGE_BUCKET,
   messagingSenderId: MESSAGING_SENDER_ID,
   appId: APP_ID,
   measurementId: ''
- 
+  */
+  apiKey: 'AIzaSyAj3LYrMKPZ4HPT4hIuqu-uNMbznfudad4',
+  authDomain: 'cdocaracas-ed2d3.firebaseapp.com',
+  projectId: 'cdocaracas-ed2d3',
+  storageBucket: 'cdocaracas-ed2d3.appspot.com',
+  messagingSenderId: '25084387666',
+  appId: '1:25084387666:web:715d06c2caa65720891a8b',
+  measurementId: ''
   
 };
 const app = initializeApp(firebaseConfig);

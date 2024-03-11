@@ -8,7 +8,7 @@ import { FFriends } from '@data';
 import { FlatList, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Formik } from 'formik';
+import { Formik, Field } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { PersonActions } from '@actions';
 import { PButtonAddUser } from '../../components';
@@ -26,7 +26,12 @@ import { SelectModal } from '../../components';
 import group from '../../reducers/group';
 import { object } from 'prop-types';
 import { MemberActions } from '@actions';
-const { setSelectedMembers } = MemberActions;
+import Select from 'react-select'
+import {Picker} from '@react-native-picker/picker';
+import {RNPickerSelect} from '@react-native-picker/picker';
+import member from '../../reducers/member';
+
+
 
 
 
@@ -46,18 +51,23 @@ function AddNew(props) {
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [groups, setGroups] = useState([])
-  //const [idValor, setIdValores] = useState([])
-  // const [grupo] = useState(route?.params?.group);
+  const { setSelectedMembers } = MemberActions;
   const [person_id, setPerson_id] = useState([])
   const [personas, setPersonas] = useState([])
   const [idValor, setIdValores] = useState(null);
   const [event, setEvent] = useState(null);
   const [friends, setFriends] = useState([]);
-  const [friend, setFriend] = useState(null);
+  const [invited_by, setInvitedBy] = useState(null);
   const route = useRoute();
   const [groupId, setGroupId] = useState([]);
   const [keyword, setKeyword] = useState('');
+  
 
+  const handleCountrySelect = (selectedItem, index) => {
+    setSelectedCountry(selectedItem);
+  };
+  
+  
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
   };
@@ -77,34 +87,22 @@ function AddNew(props) {
   useEffect(() => {
   }, [person]);
 
+ 
+  
+
   useEffect(() => {
-    async function group() {
 
-      let { data: personGroup, error2 } = await supabase
-        .from('person_group')
-        .select('person_id')
-        .eq('group_id', route?.params?.group)
-
-      if (personGroup.length > 0) {
-        let { data, errors3 } = await supabase.from('person').select('id, firstname, lastname, photo')
-          .in(
-            'id',
-            personGroup.map((p) => p.person_id.toString())
-          );
-
-
-        if (data && data.length > 0)
-          setFriends(data.map((p) => {
-            return { value: p.id, text: p.firstname, lastname: p.lastname }
-          }))
-        setFriend(data[0])
-        console.log(data)
-      }
-    }
     if (route?.params?.group) {
-      group()
+      //setFriend(route?.params?.members)
+      setFriends(route?.params?.members.map((p) => {
+        return { value: p.id, text: p.firstname}
+      }
+      ))
+        
+      console.log(route?.params?.members)
     }
-    console.log(route?.params?.group)
+  
+    console.log("valores route ", JSON.stringify(route?.params))
 
   }, [route?.params?.group]);
 
@@ -118,6 +116,7 @@ function AddNew(props) {
     phone_number: '',
     local_number: '',
     local_code: '',
+    invited_by: ''
   };
 
 
@@ -151,24 +150,26 @@ function AddNew(props) {
     local_number: yup.number().typeError("error.phone.format")
       .positive("error.phone.positive")
       .integer("error.phone.integer")
-      .test('len', 'error.phone.length', val => val?.toString().length === 7)
-      .required('error.phone.required'),
+      .test('len', 'error.phone.length', val => val?.toString().length === 7),
+      
+
     local_code: yup.number().typeError("That doesn't look like a phone number local")
       .positive("A phone number can't start with a minus")
       .integer("A phone number can't include a decimal point")
-      .test('len', 'error.code.length', val => val?.toString().length === 3)
-      .required('error.code.required'),
+      .test('len', 'error.code.length', val => val?.toString().length === 3),
+      
 
   });
 
   async function handleSubmit(values, { resetForm }) {
     //const result = await supabase.from("person").select();
+    console.log("fr "+invited_by)
     const { identify, firstname, lastname,
       address, phone_code, phone_number, local_number, local_code } = values;
     try {
       let { data: personRes, error } = await supabase.from("person").insert({
         identify, firstname, lastname,
-        address, phone_code, phone_number, local_number, local_code
+        address, phone_code, phone_number, local_number, local_code, invited_by
       })
       .select('id')
       console.log(error)
@@ -189,8 +190,8 @@ function AddNew(props) {
         text1: 'Exito',
         text2: ' Registro Exitoso!'
       });
-      console.log("valores route"+JSON.stringify(route?.params))
-      navigation.navigate('PeopleSelect', {group: route?.params?.group, members: route?.params?.members})
+      console.log("valores route aca "+JSON.stringify(route?.params))
+      navigation.navigate('PeopleSelect', {group: route?.params?.group, members: friends})
       resetForm();
 
     } catch (error) {
@@ -202,6 +203,7 @@ function AddNew(props) {
       });
     }
   }
+
 
 
 
@@ -318,8 +320,7 @@ function AddNew(props) {
 
                   <View style={{ flexDirection: 'row', marginTop: 10 }}>
                     <View style={{ flex: 3 }}>
-                  
-                      <TextInput
+                    <TextInput
                         onChangeText={handleChange('phone_code')}
                         placeholder={t('phone_code')}
                         name="phone_code"
@@ -328,6 +329,7 @@ function AddNew(props) {
                         keyboardType="numeric"
                         value={values.phone_code}
                       />
+
                     </View>
                     <View style={{ flex: 7, marginLeft: 10 }}>
                       <TextInput
@@ -375,6 +377,15 @@ function AddNew(props) {
                     </View>
                   </View>
 
+                  <View style={{ flex: 3 }}>
+                  <SelectModal
+                   options={friends}
+                   selected={values.invited_by}
+                   onApply={(item) => setInvitedBy(item.value) }
+                   label={t('invited_by')}
+                  />
+                
+                  </View>
                 </View>
               </ScrollView>
               <View style={{ padding: 20 }}>
