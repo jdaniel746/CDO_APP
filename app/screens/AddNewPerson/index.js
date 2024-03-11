@@ -62,11 +62,6 @@ function AddNew(props) {
   const [groupId, setGroupId] = useState([]);
   const [keyword, setKeyword] = useState('');
   
-
-  const handleCountrySelect = (selectedItem, index) => {
-    setSelectedCountry(selectedItem);
-  };
-  
   
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
@@ -87,8 +82,6 @@ function AddNew(props) {
   useEffect(() => {
   }, [person]);
 
- 
-  
 
   useEffect(() => {
 
@@ -169,7 +162,7 @@ function AddNew(props) {
     try {
       let { data: personRes, error } = await supabase.from("person").insert({
         identify, firstname, lastname,
-        address, phone_code, phone_number, local_number, local_code, invited_by
+        address, phone_code, phone_number, local_number, local_code, invited_by, birthdate
       })
       .select('id')
       console.log(error)
@@ -190,7 +183,7 @@ function AddNew(props) {
         text1: 'Exito',
         text2: ' Registro Exitoso!'
       });
-      console.log("valores route aca "+JSON.stringify(route?.params))
+      console.log("VALORES ACA "+JSON.stringify(route?.params))
       navigation.navigate('PeopleSelect', {group: route?.params?.group, members: friends})
       resetForm();
 
@@ -203,8 +196,6 @@ function AddNew(props) {
       });
     }
   }
-
-
 
 
   return (
@@ -311,6 +302,30 @@ function AddNew(props) {
                     selectionColor={colors.primary}
                   />
 
+                  <View style={styles.contentTitle}>
+                    <Text headline semibold>
+                      {t('input_birthdate')}
+                    </Text>
+                  </View>
+                  <TextInput
+                    style={BaseStyle.textInput}
+                    onChangeText={() => {}}
+                    name="birthdate"
+                    onBlur={handleBlur('birthdate')}
+                    errors={errors.birthdate}
+                    autoCorrect={false}
+                    placeholder={t('input_birthdate')}
+                    placeholderTextColor={BaseColor.grayColor}
+                    value={birthdate ?? values.birthdate}
+                    selectionColor={colors.primary}
+                    editable={false}
+                    icon={
+                      <TouchableOpacity onPress={showDateTimePicker}>
+                        <Icon name="calendar" size={25} color={BaseColor.grayColor} />
+                      </TouchableOpacity>
+                    }
+                  />
+
 
                   <View style={styles.contentTitle}>
                     <Text headline semibold>
@@ -380,7 +395,7 @@ function AddNew(props) {
                   <View style={{ flex: 3 }}>
                   <SelectModal
                    options={friends}
-                   selected={values.invited_by}
+                   selected={birthdate ?? values.birthdate}
                    onApply={(item) => setInvitedBy(item.value) }
                    label={t('invited_by')}
                   />
