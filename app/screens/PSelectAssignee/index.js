@@ -8,7 +8,7 @@ import {
   TextInput,
   Text
 } from '@components';
-import { BaseColor, BaseStyle, useTheme } from '@config';
+import { BaseColor, BaseStyle, useTheme, Images } from '@config';
 import { FFriends } from '@data';
 import { MemberActions } from '@actions';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -34,6 +34,7 @@ export default function PSelectAssignee() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    async function members() {
     if (route?.params?.members) {
       const members = route?.params?.members || [];
       const ids = members.map((item) => item.id);
@@ -46,9 +47,43 @@ export default function PSelectAssignee() {
       console.log("este valor 1 "+ JSON.stringify(route?.params))
       console.log("miembros  "+ JSON.stringify(members))
     }
+    if (route?.params?.groupId){
+      let { data: personGroup, error2 } = await supabase
+      .from('person_group')
+      .select('person_id')
+      .eq('group_id', route?.params?.groupId)
+
+      if(!error2) {
+
+        console.log("llamado person group " + JSON.stringify(personGroup) + " " + JSON.stringify(error2))
+        if(personGroup.length > 0) {
+          let {data, errors3} = await supabase.from('person').select('id, firstname, lastname, photo')
+            .in(
+              'id',
+              personGroup.map((p) => p.person_id.toString())
+            );
+            console.log("llamado person " + JSON.stringify(data) + " " + JSON.stringify(errors3))
+
+            if(data && data.length > 0 ) setFriends(data.map((item, index) => ({
+              ...item,
+              isSelect: false
+            })))
+        }
+      } else {
+        //colocar alert con mensaje al usuario
+        console.log(error2)
+      }
+     
+      
+    }
+    }
+    members()
   }, [route?.params?.members]);
 
-  useEffect(() => {
+  
+
+
+  /*useEffect(() => {
     async function group() {
         let { data: personGroup, error2 } = await supabase
         .from('person_group')
@@ -73,7 +108,7 @@ export default function PSelectAssignee() {
    console.log("este valor 2 "+ JSON.stringify(route?.params))
    
   }, [route?.params?.groupId]);
-
+*/
   const filterCategory = (text) => {
     setKeyword(text);
     if (text) {
@@ -130,7 +165,8 @@ export default function PSelectAssignee() {
         }}
         onPressRight={onSave}
       />
-      <View style={{ flex: 1, paddingHorizontal: 20 }}>
+      {friends.length > 0 && (
+        <View style={{ flex: 1, paddingHorizontal: 20 }}>
         <View
           style={{
             paddingTop: 15,
@@ -162,7 +198,7 @@ export default function PSelectAssignee() {
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
             <ListTextButton
-              image={item.photo}
+              image={item.photo ? item.photo : Images.profile4}
               name={item.firstname + " " +item.lastname}
               description={item.total}
               componentRight={
@@ -197,6 +233,7 @@ export default function PSelectAssignee() {
           )}
         />
       </View>
+      )}
     </SafeAreaView>
     </>
   );

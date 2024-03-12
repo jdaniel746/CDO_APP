@@ -57,7 +57,7 @@ function AddNew(props) {
   const [idValor, setIdValores] = useState(null);
   const [event, setEvent] = useState(null);
   const [friends, setFriends] = useState([]);
-  const [invited_by, setInvitedBy] = useState(null);
+  const [invited, setInvited] = useState();
   const route = useRoute();
   const [groupId, setGroupId] = useState([]);
   const [keyword, setKeyword] = useState('');
@@ -85,10 +85,10 @@ function AddNew(props) {
 
   useEffect(() => {
 
-    if (route?.params?.group) {
-      //setFriend(route?.params?.members)
+    if (route?.params?.members) {
+      
       setFriends(route?.params?.members.map((p) => {
-        return { value: p.id, text: p.firstname}
+        return { value: p.id, text: p.firstname, lastname: p.lastname}
       }
       ))
         
@@ -97,7 +97,7 @@ function AddNew(props) {
   
     console.log("valores route ", JSON.stringify(route?.params))
 
-  }, [route?.params?.group]);
+  }, [route?.params?.members, route?.params?.group]);
 
   const defaultForm = {
     identify: '',
@@ -108,8 +108,7 @@ function AddNew(props) {
     phone_code: '',
     phone_number: '',
     local_number: '',
-    local_code: '',
-    invited_by: ''
+    local_code: ''
   };
 
 
@@ -154,9 +153,10 @@ function AddNew(props) {
 
   });
 
-  async function handleSubmit(values, { resetForm }) {
+  async function handleSubmit(values,{ resetForm }) {
     //const result = await supabase.from("person").select();
-    console.log("fr "+invited_by)
+    const invited_by = invited.value;
+    console.log("jeje  "+invited_by)
     const { identify, firstname, lastname,
       address, phone_code, phone_number, local_number, local_code } = values;
     try {
@@ -165,14 +165,16 @@ function AddNew(props) {
         address, phone_code, phone_number, local_number, local_code, invited_by, birthdate
       })
       .select('id')
-      console.log(error)
+      console.log("Error para verificar "+JSON.stringify(error))
 
       if (personRes.length > 0) {
-        const { data, error1 } = await supabase.from('person_group')
-          .insert([ { person_id: personRes[0].id,
+        let { error1 } = await supabase.from('person_group')
+        .insert([ { person_id: personRes[0].id,
           group_id: parseInt(route?.params?.group )}])
-          console.log(error1 +" error1 ")
+          console.log(" error1 valor "+ JSON.stringify(error1))
 
+        
+          
       }
       setIsLoading(false);
       if (error) {
@@ -184,11 +186,13 @@ function AddNew(props) {
         text2: ' Registro Exitoso!'
       });
       console.log("VALORES ACA "+JSON.stringify(route?.params))
-      navigation.navigate('PeopleSelect', {group: route?.params?.group, members: friends})
+      //debugger
       resetForm();
+      navigation.navigate('PeopleSelect', {groupId: route?.params?.group})
+     
 
     } catch (error) {
-      console.log(error);
+      console.log("error al registrar"+JSON.stringify(error));
       Toast.show({
         type: 'error',
         text1: 'Error',
@@ -393,14 +397,23 @@ function AddNew(props) {
                   </View>
 
                   <View style={{ flex: 3 }}>
-                  <SelectModal
-                   options={friends}
-                   selected={birthdate ?? values.birthdate}
-                   onApply={(item) => setInvitedBy(item.value) }
-                   label={t('invited_by')}
-                  />
-                
+
+                  {friends.length > 0 && (
+                    <SelectModal
+                    options={friends}
+                    selected={invited}
+                    onApply={(item) => {
+                     console.log("onAPPLY "+JSON.stringify(item.value))
+                     setInvited(item) 
+                    }}
+                    label={t('invited_by')}
+                   />
+
+                  )}
+                  
                   </View>
+
+                  
                 </View>
               </ScrollView>
               <View style={{ padding: 20 }}>

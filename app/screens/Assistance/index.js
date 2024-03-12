@@ -47,6 +47,7 @@ const AssistanceGroup = () => {
   const [event, setEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [leaders, setLeaders] = useState([])
+  
 
   useEffect(() => {
     async function fetch() {
@@ -104,6 +105,13 @@ const AssistanceGroup = () => {
     }
   }, [grupo]);
 
+  useEffect(() => {
+    if (members.members && Object.keys(members.members).length > 0) {
+      console.log('miembros del grupo: ' + JSON.stringify(members.members));
+      setAssistants(members.members.filter((item) => item.isSelect));
+    }
+  }, [members.members]);
+
  
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
@@ -134,6 +142,43 @@ const AssistanceGroup = () => {
       </TouchableOpacity>
     )
   }
+
+  async function handleSubmit(values) {
+    //const result = await supabase.from("person").select();
+
+    
+    
+    const {  date } = values;
+    try {
+      let { data, error } = await supabase.from("report").insert({
+        date})
+      .select()
+      console.log(data)
+      console.log("Error4 "+ " "+JSON.stringify(error))
+
+      setIsLoading(false);
+      if (error) {
+        throw error;
+      }
+      Toast.show({
+        type: 'success',
+        text1: 'Exito',
+        text2: ' Reporte Exitoso!'
+      });
+      
+      navigation.navigate('Home')
+
+    } catch (error) {
+      console.log("error al registrar" + " " +JSON.stringify(error));
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'No se guardo reporte!'
+      });
+    }
+  }
+
+
 
   return (
     <>
@@ -297,7 +342,7 @@ const AssistanceGroup = () => {
                 />
               </View>
               <View style={{ padding: 20, marginBottom: 20 }}>
-                <Button full onPress={() => {}}>
+                <Button full onPress={handleSubmit}>
                   {t('confirm')}
                 </Button>
               </View>

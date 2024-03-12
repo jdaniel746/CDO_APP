@@ -12,8 +12,9 @@ const SelectModal = (props) => {
   const [selectedItem, setSelectedItem] = useState(selected);
   const { colors } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
-
+console.log("sel "+ JSON.stringify(options) + " "+ JSON.stringify(selected))
   const onSelectFilter = (item) => {
+    console.log("item " +JSON.stringify(item))
     setSelectedItem(item);
     setOptionList(
       options.map((option) => ({
@@ -24,6 +25,7 @@ const SelectModal = (props) => {
   };
 
   useEffect(() => {
+    console.log("ussefect select"+JSON.stringify(selected))
     if(options.length > 0 && selected != null ) {
       onSelectFilter(selected);
     }
@@ -52,6 +54,7 @@ const SelectModal = (props) => {
             setModalVisible(false);
           }}
           onApply={() => {
+            console.log("apply "+selectedItem)
             onApply(selectedItem);
             setModalVisible(false);
           }}
