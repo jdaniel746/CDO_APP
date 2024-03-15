@@ -199,48 +199,6 @@ function AddNew(props) {
         
       }
 
-    /* if (person.length > 0  ){
-      console.log(Busqueda)
-      let { data: personRes, error } = await supabase.from("person").insert({
-        identify, firstname, lastname,
-        address, phone_code, phone_number, local_number, local_code, invited_by, birthdate
-      })
-      .select('id')
-      console.log("Error para verificar "+JSON.stringify(error))
-      if (personRes.length > 0) {
-        let { error1 } = await supabase.from('person_group')
-        .insert([ { person_id: personRes[0].id,
-          group_id: parseInt(route?.params?.group )}])
-          console.log(" error1 valor "+ JSON.stringify(error1))  
-      }  
-      
-     }else {
-      if (Busqueda == true ){
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: 'Esta persona ya fue registrada!'
-        });
-
-      }
-     }
-        \*/
-      //setIsLoading(false);
-      /*if (error) {
-        throw error;
-      }
-      Toast.show({
-        type: 'success',
-        text1: 'Exito',
-        text2: ' Registro Exitoso!'
-      });
-      */
-      /*console.log("VALORES ACA "+JSON.stringify(route?.params))
-      //debugger
-      resetForm();
-      navigation.navigate('PeopleSelect', {groupId: route?.params?.group})
-     */
-
     } catch (error) {
       console.log("error al registrar"+JSON.stringify(error));
       Toast.show({
