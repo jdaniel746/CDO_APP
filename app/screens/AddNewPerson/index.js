@@ -32,9 +32,6 @@ import {RNPickerSelect} from '@react-native-picker/picker';
 import member from '../../reducers/member';
 
 
-
-
-
 const { fetchPerson, updatePerson } = PersonActions;
 //const minDate = dayjs().add(2, 'day').format('YYYY-MM-DD');
 
@@ -50,18 +47,21 @@ function AddNew(props) {
   const [birthdate, setBirthdate] = useState();
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [groups, setGroups] = useState([])
-  const { setSelectedMembers } = MemberActions;
-  const [person_id, setPerson_id] = useState([])
-  const [personas, setPersonas] = useState([])
-  const [idValor, setIdValores] = useState(null);
-  const [event, setEvent] = useState(null);
+  
   const [friends, setFriends] = useState([]);
   const [invited, setInvited] = useState();
   const route = useRoute();
   const [groupId, setGroupId] = useState([]);
   const [keyword, setKeyword] = useState('');
-  
+  const [codePhone, setCodePhone] = useState
+  ([{value: '424', text: '424'},{value: '414', text: '414'},{value: '426', text: '426'},{value: '416', text: '416'},{value: '412', text: '412'}]);
+  const [codeSelect, setCod] = useState();
+
+  const [codeLocal, setCodeLocal] = useState
+  ([{value: '212', text: '212', Caracas: '0212'}
+
+]);
+  const [codeLocalSelect, setCodLocal] = useState();
   
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
@@ -105,10 +105,8 @@ function AddNew(props) {
     lastname: '',
     address: '',
     birthdate: '',
-    phone_code: '',
     phone_number: '',
     local_number: '',
-    local_code: ''
   };
 
 
@@ -119,7 +117,6 @@ function AddNew(props) {
       .required('error.firstname.required')
       .min(3, 'error.firstname.min')
       .max(15, 'error.firstname.max'),
-    //invitedBy: yup.string().min(3, 'error.middlename.min').max(20, 'error.middlename.max'),
     lastname: yup
       .string()
       .required('error.lastname.required')
@@ -132,52 +129,104 @@ function AddNew(props) {
       .integer("error.phone.integer")
       .test('len', 'error.phone.length', val => val?.toString().length === 7)
       .required('error.phone.required'),
-    phone_code: yup.number().typeError("That doesn't look like a phone number")
-      .positive("A phone number can't start with a minus")
-      .integer("A phone number can't include a decimal point")
-      .test('len', 'error.code.length', val => val?.toString().length === 3)
-      .required('error.code.required'),
-
 
     local_number: yup.number().typeError("error.phone.format")
       .positive("error.phone.positive")
       .integer("error.phone.integer")
       .test('len', 'error.phone.length', val => val?.toString().length === 7),
       
-
-    local_code: yup.number().typeError("That doesn't look like a phone number local")
-      .positive("A phone number can't start with a minus")
-      .integer("A phone number can't include a decimal point")
-      .test('len', 'error.code.length', val => val?.toString().length === 3),
-      
-
   });
 
   async function handleSubmit(values,{ resetForm }) {
-    //const result = await supabase.from("person").select();
     const invited_by = invited.value;
     console.log("jeje  "+invited_by)
+    const phone_code = codeSelect.value
+    console.log("valor del codigo telefonico "+phone_code) 
+    const local_code = codeLocalSelect.value;
     const { identify, firstname, lastname,
-      address, phone_code, phone_number, local_number, local_code } = values;
-    try {
+      address, phone_number, local_number } = values;
+      try {
+      let {data: person, error1 } = await supabase.from("person").select("identify")
+      const cedulas = (person)
+      console.log(cedulas)
+
+      const ced = identify
+      console.log(ced)
+
+      const found = cedulas.find(e => e.identify === ced);
+      console.log(found)
+
+      const Busqueda = cedulas.includes(found)
+      console.log("este valor es :"+JSON.stringify(Busqueda))
+
+      if (Busqueda === true ){
+        console.log("Hey aquiiii ")
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Esta persona ya esta registrada'
+        });
+        
+      }else {
+        console.log("El valor debe ser indefinido ")
+        if (person.length > 0  ){
+          let { data: personRes, error } = await supabase.from("person").insert({
+            identify, firstname, lastname,
+            address, phone_code, phone_number, local_number, local_code, invited_by, birthdate
+          })
+          .select('id')
+          console.log("Error para verificar "+JSON.stringify(error))
+          if (personRes.length > 0) {
+            let { error1 } = await supabase.from('person_group')
+            .insert([ { person_id: personRes[0].id,
+              group_id: parseInt(route?.params?.group )}])
+              console.log(" error1 valor "+ JSON.stringify(error1))  
+          }  
+          setIsLoading(false);
+          if (error) {
+            throw error;
+          }
+          Toast.show({
+            type: 'success',
+            text1: 'Exito',
+            text2: ' Registro Exitoso!'
+          });
+
+          console.log("VALORES ACA "+JSON.stringify(route?.params))
+          resetForm();
+          navigation.navigate('PeopleSelect', {groupId: route?.params?.group})
+         }
+        
+      }
+
+    /* if (person.length > 0  ){
+      console.log(Busqueda)
       let { data: personRes, error } = await supabase.from("person").insert({
         identify, firstname, lastname,
         address, phone_code, phone_number, local_number, local_code, invited_by, birthdate
       })
       .select('id')
       console.log("Error para verificar "+JSON.stringify(error))
-
       if (personRes.length > 0) {
         let { error1 } = await supabase.from('person_group')
         .insert([ { person_id: personRes[0].id,
           group_id: parseInt(route?.params?.group )}])
-          console.log(" error1 valor "+ JSON.stringify(error1))
+          console.log(" error1 valor "+ JSON.stringify(error1))  
+      }  
+      
+     }else {
+      if (Busqueda == true ){
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Esta persona ya fue registrada!'
+        });
 
-        
-          
       }
-      setIsLoading(false);
-      if (error) {
+     }
+        \*/
+      //setIsLoading(false);
+      /*if (error) {
         throw error;
       }
       Toast.show({
@@ -185,11 +234,12 @@ function AddNew(props) {
         text1: 'Exito',
         text2: ' Registro Exitoso!'
       });
-      console.log("VALORES ACA "+JSON.stringify(route?.params))
+      */
+      /*console.log("VALORES ACA "+JSON.stringify(route?.params))
       //debugger
       resetForm();
       navigation.navigate('PeopleSelect', {groupId: route?.params?.group})
-     
+     */
 
     } catch (error) {
       console.log("error al registrar"+JSON.stringify(error));
@@ -339,15 +389,16 @@ function AddNew(props) {
 
                   <View style={{ flexDirection: 'row', marginTop: 10 }}>
                     <View style={{ flex: 3 }}>
-                    <TextInput
-                        onChangeText={handleChange('phone_code')}
-                        placeholder={t('phone_code')}
-                        name="phone_code"
-                        onBlur={handleBlur('phone_code')}
-                        errors={errors.phone_code}
-                        keyboardType="numeric"
-                        value={values.phone_code}
-                      />
+                    <SelectModal
+                    options={codePhone}
+                    selected={codeSelect}
+                    onApply={(item) => {
+                      console.log("onAPPLY code "+JSON.stringify(item.value))
+                    
+                     setCod(item) 
+                    }}
+                    label={t('phone_code')}
+                   />
 
                     </View>
                     <View style={{ flex: 7, marginLeft: 10 }}>
@@ -373,15 +424,16 @@ function AddNew(props) {
 
                   <View style={{ flexDirection: 'row', marginTop: 10 }}>
                     <View style={{ flex: 3 }}>
-                      <TextInput
-                        onChangeText={handleChange('local_code')}
-                        placeholder={t('local_code')}
-                        name="local_code"
-                        onBlur={handleBlur('local_code')}
-                        errors={errors.local_code}
-                        keyboardType="numeric"
-                        value={values.local_code}
-                      />
+                    <SelectModal
+                    options={codeLocal}
+                    selected={codeLocalSelect}
+                    onApply={(item) => {
+                      console.log("onAPPLY code local "+JSON.stringify(item.value))
+                    
+                     setCodLocal(item) 
+                    }}
+                    label={t('local_code')}
+                   />
                     </View>
                     <View style={{ flex: 7, marginLeft: 10 }}>
                       <TextInput
@@ -396,23 +448,22 @@ function AddNew(props) {
                     </View>
                   </View>
 
+                  <View style={{ flexDirection: 'row', marginTop: 10 }}>
                   <View style={{ flex: 3 }}>
-
-                  {friends.length > 0 && (
+                    {friends.length > 0 && (
                     <SelectModal
                     options={friends}
-                    selected={invited}
-                    onApply={(item) => {
-                     console.log("onAPPLY "+JSON.stringify(item.value))
-                     setInvited(item) 
-                    }}
-                    label={t('invited_by')}
-                   />
+                     selected={invited}
+                      onApply={(item) => {
+                          console.log("onAPPLY "+JSON.stringify(item.value))
+                             setInvited(item) 
+                              }}
+                               label={t('invited_by')}
+                               />
+                               )}
+                               </View>
 
-                  )}
-                  
-                  </View>
-
+                    </View>
                   
                 </View>
               </ScrollView>

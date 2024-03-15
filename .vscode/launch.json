@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Attach to packager",
+            "cwd": "${workspaceFolder}",
+            "type": "reactnative",
+            "request": "attach"
+        },
+        {
+            "type": "expo",
+            "request": "attach",
+            "name": "Inspect Expo app",
+            "projectRoot": {
+                "$mid": 1,
+                "fsPath": "c:\\Users\\Lenovo\\Documents\\CDO_APP-GuardarNuevaPersonaSuperbase",
+                "_sep": 1,
+                "external": "file:///c%3A/Users/Lenovo/Documents/CDO_APP-GuardarNuevaPersonaSuperbase",
+                "path": "/c:/Users/Lenovo/Documents/CDO_APP-GuardarNuevaPersonaSuperbase",
+                "scheme": "file"
+            },
+            "bundlerHost": "127.0.0.1"
+        }
+    ]
+}

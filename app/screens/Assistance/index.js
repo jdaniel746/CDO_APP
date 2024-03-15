@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useTheme, BaseStyle, BaseColor } from '../../config';
+import { useTheme, BaseStyle, BaseColor, Images} from '../../config';
 import { PTeamMembersInCreate } from '@data';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -248,7 +248,7 @@ const AssistanceGroup = () => {
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}>
-                          <ProfileGridSmall image={item.image} name={item.name} onPress={() => {}} />
+                          <ProfileGridSmall image={item.Images} name={item.name} onPress={() => {}} />
                         </View>
 
                         {index == assistants.length - 1 && (

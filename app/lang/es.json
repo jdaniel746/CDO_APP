@@ -379,6 +379,9 @@
 	"error.invitadoPor.required": "Debe ingresar un nombre",
 	"error.invitadoPor.min": "El nombre debe tener minimo 3 caracteres",
 	"error.invitadoPor.max": "El nombre debe tener maximo 15 caracteres",
+	"error.address.min": "La direccion debe tener minimo 10 caracteres",
+	"error.address.max": "La direccion debe tener maximo 100 caracteres",
+
 
 	"local_number": "Telefono local",
 	"phone_code": "Codigo",
