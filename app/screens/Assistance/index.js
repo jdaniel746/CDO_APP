@@ -25,6 +25,7 @@ import supabase from "../../config/supabase";
 import Spinner from "react-native-loading-spinner-overlay";
 import Toast from "react-native-toast-message";
 import member from '../../reducers/member';
+import group from '../../reducers/group';
 
 
 const AssistanceGroup = () => {
@@ -44,7 +45,7 @@ const AssistanceGroup = () => {
   const [dateAssistance, setDateAssistance] = useState(date)
   const [groups, setGroups] = useState([])
   const [eventList, setEventList] = useState([])
-  const [event, setEvent] = useState(null);
+  const [event, setEvent] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [leaders, setLeaders] = useState([])
   
@@ -63,7 +64,8 @@ const AssistanceGroup = () => {
         })
         setGroups(groupList)
         setGrupo(groupList[0])
-        console.log(groupList)
+       
+        
       } else {
         Toast.show({
           type: 'error',
@@ -143,16 +145,22 @@ const AssistanceGroup = () => {
     )
   }
 
-  async function handleSubmit(values) {
-    //const result = await supabase.from("person").select();
+  async function handleSubmit() {
+    const created_by = auth.user.person_id
+    console.log(created_by)
+    const event_id = (event.value)
+    console.log(event_id)
+    group_id = (groups[0].value) 
+    console.log(group_id)
+    week = "2"
+    offer_amount_usud = offerUSD
+    console.log(offer_amount_usud)
+    offer_amount_ves =  offerVES
+    console.log(offer_amount_ves)
 
-    
-    
-    const {  date } = values;
     try {
       let { data, error } = await supabase.from("report").insert({
-        date})
-      .select()
+        date, created_by, event_id, group_id, week})
       console.log(data)
       console.log("Error4 "+ " "+JSON.stringify(error))
 
