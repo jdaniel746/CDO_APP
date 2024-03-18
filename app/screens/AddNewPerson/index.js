@@ -88,7 +88,7 @@ function AddNew(props) {
     if (route?.params?.members) {
       
       setFriends(route?.params?.members.map((p) => {
-        return { value: p.id, text: p.firstname, lastname: p.lastname}
+        return { value: p.id, text: p.firstname +" "+ p.lastname}
       }
       ))
         
@@ -164,7 +164,7 @@ function AddNew(props) {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Esta persona ya esta registrada'
+          text2: 'Esta persona ya fue registrada'
         });
         
       }else {
@@ -412,7 +412,8 @@ function AddNew(props) {
                     <SelectModal
                     options={friends}
                      selected={invited}
-                      onApply={(item) => {
+                     keyExtractor={(item) => item.lastname}
+                      onApply={(item) =>  {
                           console.log("onAPPLY "+JSON.stringify(item.value))
                              setInvited(item) 
                               }}
