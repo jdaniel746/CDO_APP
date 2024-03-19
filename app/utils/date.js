@@ -1,4 +1,4 @@
-export default function date({ date }) {
+export default function NumeroDeSeman({ date }) {
     function getDateWeek(date) {
         const currentDate = 
             (typeof date === 'object') ? date : new Date();
@@ -20,5 +20,7 @@ export default function date({ date }) {
     const weekNumber = getDateWeek();
      
     console.log("Week number of " + currentDate + " is : " + weekNumber);
-
 }
+    
+
+
