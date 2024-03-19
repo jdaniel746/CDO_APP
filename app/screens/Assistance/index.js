@@ -174,6 +174,7 @@ const AssistanceGroup = () => {
         })
         console.log("valore id "+JSON.stringify(valores))
         for  (var i = 0; i <valores.length; i++){
+          
           const Asistente =(valores[i].value)
           console.log("ID DE LOS ASISTENTES, "+JSON.stringify(Asistente))
           let { data: report_datail, error1 } = await supabase
