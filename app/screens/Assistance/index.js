@@ -114,6 +114,8 @@ const AssistanceGroup = () => {
     }
   }, [members.members]);
 
+  
+
  
   const showDateTimePicker = () => {
     setIsDateTimePickerVisible(true);
@@ -159,10 +161,29 @@ const AssistanceGroup = () => {
     console.log(offer_amount_ves)
 
     try {
-      let { data, error } = await supabase.from("report").insert({
+
+      let { data: report, error } = await supabase.from("report").insert({
         date, created_by, event_id, group_id, week})
-      console.log(data)
-      console.log("Error4 "+ " "+JSON.stringify(error))
+        .select('id')
+        console.log(report)
+      console.log("data de report "+JSON.stringify(report)+"Error4 "+ " "+JSON.stringify(error))
+
+      if (report.length > 0) {
+        const valores = assistants.map((e) => {
+          return { value: e.id}
+        })
+        console.log("valore id "+JSON.stringify(valores))
+        for  (var i = 0; i <valores.length; i++){
+          const Asistente =(valores[i].value)
+          console.log("ID DE LOS ASISTENTES, "+JSON.stringify(Asistente))
+          let { data: report_datail, error1 } = await supabase
+          .from('report_datail')
+          .insert([ { report_id: report[0].id,
+            person_id: parseInt(Asistente)}])
+            .select('id')
+            console.log("valor de data "+JSON.stringify(report_datail)+" error2 valor "+ JSON.stringify(error1))  
+        }   
+      }  
 
       setIsLoading(false);
       if (error) {
