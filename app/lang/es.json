@@ -352,6 +352,7 @@
 	"Disciples": "Discipulados",
 	"Assistance": "Asistencia",
 	"Sign Out": "Cerrar Seccion",
+	"Current_Week": "Semana Actual",
 
     "error.identify.required": "Debe ingresar un numero de cedula",
 	"error.identify.min": "La cedula debe tener minimo 7 caracteres",
