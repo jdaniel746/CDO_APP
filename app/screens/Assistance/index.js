@@ -26,7 +26,8 @@ import Spinner from "react-native-loading-spinner-overlay";
 import Toast from "react-native-toast-message";
 import member from '../../reducers/member';
 import group from '../../reducers/group';
-
+import getDateWeek from '../../utils/date';
+  
 
 const AssistanceGroup = () => {
   const { t } = useTranslation();
@@ -44,11 +45,19 @@ const AssistanceGroup = () => {
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [dateAssistance, setDateAssistance] = useState(date)
   const [groups, setGroups] = useState([])
-  const [eventList, setEventList] = useState([])
+  const [eventList, setEventList] = useState(null)
   const [event, setEvent] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [leaders, setLeaders] = useState([])
-  
+ // const [weekReport, setWeekReport] = useState([])
+  //const [weekSelect, setweekSelect] = useState([]);
+  const [weekReport,  setWeekReport] = useState
+  ([{value: '1', text: '1'},{value: '2', text: '2'},{value: '3', text: '3'},{value: '4', text: '4'},{value: '5', text: '5'},
+  {value: '6', text: '6'},{value: '7', text: '7'},{value: '8', text: '8'},{value: '9', text: '9'},
+ {value: '10', text: '10'},{value: '11', text: '11'},{value: '12', text: '12'},{value: '13', text: '13'}]);
+  const [weekSelect, setweekSelect] = useState();
+
+  const weekNumber = getDateWeek();
 
   useEffect(() => {
     async function fetch() {
@@ -146,57 +155,83 @@ const AssistanceGroup = () => {
       </TouchableOpacity>
     )
   }
-
+ 
+ const Semanas = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
+  let greaterTen = [];
+  for (let i = 0; i<=Semanas.length; i++) {
+    var currentNumber = Semanas[i];
+    if (currentNumber < weekNumber) {
+      greaterTen.push(currentNumber)
+    }
+  }
+  console.log("Valores de Semana menores a la actual "+ greaterTen); 
+ 
   async function handleSubmit() {
+   
     const created_by = auth.user.person_id
-    console.log(created_by)
     const event_id = (event.value)
-    console.log(event_id)
     group_id = (groups[0].value) 
-    console.log(group_id)
-    week = "2"
+    SemanaReportada = parseInt((weekSelect.value))
+    week = SemanaReportada
+    
     offer_amount_usud = offerUSD
-    console.log(offer_amount_usud)
     offer_amount_ves =  offerVES
-    console.log(offer_amount_ves)
 
     try {
+    let {data: semana, error1 } = await supabase.from("report").select("week")
+      const valorSemana = (semana)
+      console.log("Estos son los valores "+JSON.stringify(valorSemana))
 
-      let { data: report, error } = await supabase.from("report").insert({
-        date, created_by, event_id, group_id, week})
-        .select('id')
-        console.log(report)
-      console.log("data de report "+JSON.stringify(report)+"Error4 "+ " "+JSON.stringify(error))
+      const found = valorSemana.find(e => e.week === SemanaReportada);
+      console.log("Valor de funcion "+JSON.stringify(found))
 
-      if (report.length > 0) {
-        const valores = assistants.map((e) => {
-          return { value: e.id}
-        })
-        console.log("valore id "+JSON.stringify(valores))
-        for  (var i = 0; i <valores.length; i++){
-          
-          const Asistente =(valores[i].value)
-          console.log("ID DE LOS ASISTENTES, "+JSON.stringify(Asistente))
-          let { data: report_datail, error1 } = await supabase
-          .from('report_datail')
-          .insert([ { report_id: report[0].id,
-            person_id: parseInt(Asistente)}])
-            .select('id')
-            console.log("valor de data "+JSON.stringify(report_datail)+" error2 valor "+ JSON.stringify(error1))  
-        }   
-      }  
+      const Busqueda = valorSemana.includes(found)
+      console.log("este valor de semana es :"+JSON.stringify(Busqueda))
 
-      setIsLoading(false);
-      if (error) {
-        throw error;
+      if (Busqueda === true ){
+        console.log("Hey aquiiii ")
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Este reporte ya fue registrado'
+        });
+
+      }else {
+        let { data: report, error } = await supabase.from("report").insert({
+          date, created_by, event_id, group_id, week})
+          .select('id')
+          console.log(report)
+        console.log("data de report "+JSON.stringify(report)+"Error4 "+ " "+JSON.stringify(error))
+  
+        if (report.length > 0) {
+          const valores = assistants.map((e) => {
+            return { value: e.id}
+          })
+          console.log("valore id "+JSON.stringify(valores))
+          for  (var i = 0; i <valores.length; i++){
+            const Asistente =(valores[i].value)
+            console.log("ID DE LOS ASISTENTES, "+JSON.stringify(Asistente))
+            let { data: report_datail, error1 } = await supabase
+            .from('report_datail')
+            .insert([ { report_id: report[0].id,
+              person_id: parseInt(Asistente)}])
+              .select('id')
+              console.log("valor de data "+JSON.stringify(report_datail)+" error2 valor "+ JSON.stringify(error1))  
+          }   
+        }  
+        setIsLoading(false);
+        if (error) {
+          throw error;
+        }
+        Toast.show({
+          type: 'success',
+          text1: 'Exito',
+          text2: ' Reporte Exitoso!'
+        });
+        
+        navigation.navigate('Home')
+        
       }
-      Toast.show({
-        type: 'success',
-        text1: 'Exito',
-        text2: ' Reporte Exitoso!'
-      });
-      
-      navigation.navigate('Home')
 
     } catch (error) {
       console.log("error al registrar" + " " +JSON.stringify(error));
@@ -208,14 +243,12 @@ const AssistanceGroup = () => {
     }
   }
 
-
-
   return (
     <>
       {isLoading && (
         <Spinner visible={isLoading} />
       )}
-      { eventList && (
+      { eventList &&  (
         <SafeAreaView style={{ marginTop: 30 }} edges={['right', 'top', 'left']}>
           <Header
             title={t('assistance_title')}
@@ -237,6 +270,8 @@ const AssistanceGroup = () => {
               onConfirm={handleDatePicked}
               onCancel={hideDateTimePicker}
             />
+            
+            
             <View style={styles.contain}>
               <View style={styles.specifications}>
                 <ProductSpecGrid style={{ flex: 1 }} title={date} description={t('assistance_date')} renderTitle={renderDate} />
@@ -247,6 +282,10 @@ const AssistanceGroup = () => {
                   label="group"
                 />
               </View>
+              <Text style={styles.subtitle}>{t('Current_Week')}</Text>
+              <Text style={{alignItems: "center"}}>{weekNumber}</Text>
+
+              
               <View style={[styles.specifications, { justifyContent: 'space-between' }]}>
                 <Text style={styles.subtitle}>{t('group_leaders')}</Text>
                 <SelectModal
@@ -255,6 +294,7 @@ const AssistanceGroup = () => {
                   onApply={(item) => setEvent(item)}
                   label="event"
                 />
+               
               </View>
               <View style={{ marginTop: -20 }}>
                 <Avatars users={leaders.map((l) => { return {image: l.photo}})} limit={3} isShowMore={false} />
@@ -264,10 +304,22 @@ const AssistanceGroup = () => {
                   return member.firstname + ' ' + member.lastname;
                 }).join(', ')}
               </Text>
+
+              <View >
+                <SelectModal
+                  options={weekReport}
+                  selected={weekSelect}
+                  onApply={(item) => setweekSelect(item)}
+                  label="Semana a reportar"
+                />
+               
+              </View>
+              
               <View style={{ marginTop: 20 }}>
                 <Text headline style={styles.subtitle}>
                   {t('assistants')}
                 </Text>
+                
                 <View style={styles.wrapContent}>
                   {assistants.map((item, index) => {
                     return (
@@ -371,11 +423,14 @@ const AssistanceGroup = () => {
                   value={comment}
                 />
               </View>
+              
               <View style={{ padding: 20, marginBottom: 20 }}>
                 <Button full onPress={handleSubmit}>
                   {t('confirm')}
                 </Button>
               </View>
+
+              
             </View>
           </ScrollView>
         </SafeAreaView>
