@@ -228,7 +228,7 @@ const Navigator = (props) => {
 
       supabase.auth.onAuthStateChange(async (event, session) => {
         console.log("ONAUTH")
-        console.log(event)
+        console.log(+"valor de evento "+JSON.stringify(event))
         console.log("----------")
         console.log(session)
         switch (event) {
@@ -264,7 +264,7 @@ const Navigator = (props) => {
               Toast.show({
                 type: 'error',
                 text1: 'Error',
-                text2: 'usuario o password invalidos!'
+                text2: 'usuario o password invalidos dos !'
               });
               //callback({ success: false, message: 'usuario o password invalidos!' });
             }

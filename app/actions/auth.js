@@ -27,16 +27,17 @@ const onRegister = () => {
 
 export const login = (login, callback) => async (dispatch) => {
   try {
-    const {user, session, error} = await supabase.auth.signInWithPassword({
+    const {data, error} = await supabase.auth.signInWithPassword({
       email: login.user,
       password: login.password
     })
+    console.log("valor de data "+JSON.stringify(data))
     console.log(error)
     if(error) throw error
-    console.log("ON LOGIN")
-    callback({success: true, message: 'jaja'})
+    console.log("ON LOGIN aca")
+    callback({success: true, message: 'ingreso exitoso '})
   } catch (e) {
-    callback({ success: false, message: 'usuario o password invalidos!' });
+    callback({ success: false, message: 'usuario o password invalidos uno!' });
     console.log('ERROR: ' + e);
   }
 };

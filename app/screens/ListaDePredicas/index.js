@@ -7,6 +7,7 @@ import { ScrollView, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import styles from "./styles";
 import { getFirestore, collection, onSnapshot , getDoc, query, where} from "firebase/firestore";
+import { FCategoryData } from "../../data";
 
 
 

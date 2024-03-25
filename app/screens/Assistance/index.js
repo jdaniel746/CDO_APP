@@ -52,9 +52,9 @@ const AssistanceGroup = () => {
  // const [weekReport, setWeekReport] = useState([])
   //const [weekSelect, setweekSelect] = useState([]);
   const [weekReport,  setWeekReport] = useState
-  ([{value: '1', text: '1'},{value: '2', text: '2'},{value: '3', text: '3'},{value: '4', text: '4'},{value: '5', text: '5'},
-  {value: '6', text: '6'},{value: '7', text: '7'},{value: '8', text: '8'},{value: '9', text: '9'},
- {value: '10', text: '10'},{value: '11', text: '11'},{value: '12', text: '12'},{value: '13', text: '13'}]);
+  ([{value: '1', text: '1'},{value: '2', text: '2'},{value: '3', text: '3'},{value: '4', text: '4'},{value: '5', text: '5'},{value: '6', text: '6'},{value: '7', text: '7'},{value: '8', text: '8'},{value: '9', text: '9'},{value: '10', text: '10'},{value: '11', text: '11'},{value: '12', text: '12'},{value: '13', text: '13'},{value: '14', text: '14'},{value: '15', text: '15'}
+  ,{value: '16', text: '16'},{value: '17', text: '17'},{value: '18', text: '18'},{value: '19', text: '19'},{value: '20', text: '20'},{value: '21', text: '21'},,{value: '16', text: '16'},{value: '17', text: '17'},{value: '18', text: '18'},{value: '19', text: '19'},{value: '20', text: '20'},{value: '21', text: '21'},{value: '22', text: '22'},{value: '23', text: '23'},{value: '24', text: '24'},{value: '25', text: '25'},{value: '26', text: '26'},{value: '27', text: '27'},,{value: '28', text: '28'},{value: '29', text: '29'},{value: '30', text: '30'},{value: '31', text: '31'},{value: '32', text: '32'},{value: '33', text: '33'},
+  {value: '34', text: '34'},{value: '35', text: '35'},{value: '36', text: '36'},{value: '37', text: '37'},{value: '38', text: '38'},{value: '39', text: '39'},,{value: '40', text: '40'},{value: '41', text: '41'},{value: '42', text: '42'},{value: '43', text: '43'},{value: '44', text: '44'},{value: '45', text: '45'},{value: '46', text: '46'},{value: '47', text: '47'},{value: '48', text: '48'},{value: '49', text: '49'},{value: '50', text: '50'},{value: '51', text: '51'},,{value: '52', text: '52'},{value: '53', text: '53'}]);
   const [weekSelect, setweekSelect] = useState();
 
   const weekNumber = getDateWeek();
@@ -73,7 +73,10 @@ const AssistanceGroup = () => {
         })
         setGroups(groupList)
         setGrupo(groupList[0])
-       
+        let {data: Semanas, error1 } = await supabase.from("report").select("week")
+        console.log("Valores de SEA "+JSON.stringify(Semanas))
+        const SemanasReportadas = Semanas
+        console.log("Estas fueron las semanas reportadas "+JSON.stringify(SemanasReportadas))
         
       } else {
         Toast.show({
@@ -156,16 +159,12 @@ const AssistanceGroup = () => {
     )
   }
  
- const Semanas = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
-  let greaterTen = [];
-  for (let i = 0; i<=Semanas.length; i++) {
-    var currentNumber = Semanas[i];
-    if (currentNumber < weekNumber) {
-      greaterTen.push(currentNumber)
-    }
-  }
-  console.log("Valores de Semana menores a la actual "+ greaterTen); 
- 
+  const resulSemana = weekReport.filter((w) => w.value <= weekNumber);
+  console.log("aca es "+JSON.stringify(resulSemana))
+
+  
+
+
   async function handleSubmit() {
    
     const created_by = auth.user.person_id
@@ -307,7 +306,7 @@ const AssistanceGroup = () => {
 
               <View >
                 <SelectModal
-                  options={weekReport}
+                  options={resulSemana}
                   selected={weekSelect}
                   onApply={(item) => setweekSelect(item)}
                   label="Semana a reportar"
