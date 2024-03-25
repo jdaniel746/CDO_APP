@@ -49,6 +49,7 @@ const AssistanceGroup = () => {
   const [event, setEvent] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [leaders, setLeaders] = useState([])
+  const [SemanasReportadas, setSemanasReportadas] = useState([]);
  // const [weekReport, setWeekReport] = useState([])
   //const [weekSelect, setweekSelect] = useState([]);
   const [weekReport,  setWeekReport] = useState
@@ -75,8 +76,8 @@ const AssistanceGroup = () => {
         setGrupo(groupList[0])
         let {data: Semanas, error1 } = await supabase.from("report").select("week")
         console.log("Valores de SEA "+JSON.stringify(Semanas))
-        const SemanasReportadas = Semanas
-        console.log("Estas fueron las semanas reportadas "+JSON.stringify(SemanasReportadas))
+        setSemanasReportadas(Semanas)
+        //console.log("Estas fueron las semanas reportadas "+JSON.stringify(SemanasReportadas))
         
       } else {
         Toast.show({
@@ -158,11 +159,13 @@ const AssistanceGroup = () => {
       </TouchableOpacity>
     )
   }
+
  
   const resulSemana = weekReport.filter((w) => w.value <= weekNumber);
   console.log("aca es "+JSON.stringify(resulSemana))
 
-  
+  const found1 = resulSemana.find(e => e.value !== SemanasReportadas.week);
+  console.log("valor de f"+JSON.stringify(found1))
 
 
   async function handleSubmit() {
