@@ -4,6 +4,7 @@ import { PTeamMembersInCreate } from '@data';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import styles from './styles';
+
 import {
 
   Button,
@@ -45,13 +46,11 @@ const AssistanceGroup = () => {
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [dateAssistance, setDateAssistance] = useState(date)
   const [groups, setGroups] = useState([])
-  const [eventList, setEventList] = useState(null)
+  const [eventList, setEventList] = useState([])
   const [event, setEvent] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [leaders, setLeaders] = useState([])
   const [SemanasReportadas, setSemanasReportadas] = useState([]);
- // const [weekReport, setWeekReport] = useState([])
-  //const [weekSelect, setweekSelect] = useState([]);
   const [weekReport,  setWeekReport] = useState
   ([{value: '1', text: '1'},{value: '2', text: '2'},{value: '3', text: '3'},{value: '4', text: '4'},{value: '5', text: '5'},{value: '6', text: '6'},{value: '7', text: '7'},{value: '8', text: '8'},{value: '9', text: '9'},{value: '10', text: '10'},{value: '11', text: '11'},{value: '12', text: '12'},{value: '13', text: '13'},{value: '14', text: '14'},{value: '15', text: '15'}
   ,{value: '16', text: '16'},{value: '17', text: '17'},{value: '18', text: '18'},{value: '19', text: '19'},{value: '20', text: '20'},{value: '21', text: '21'},,{value: '16', text: '16'},{value: '17', text: '17'},{value: '18', text: '18'},{value: '19', text: '19'},{value: '20', text: '20'},{value: '21', text: '21'},{value: '22', text: '22'},{value: '23', text: '23'},{value: '24', text: '24'},{value: '25', text: '25'},{value: '26', text: '26'},{value: '27', text: '27'},,{value: '28', text: '28'},{value: '29', text: '29'},{value: '30', text: '30'},{value: '31', text: '31'},{value: '32', text: '32'},{value: '33', text: '33'},
@@ -77,7 +76,7 @@ const AssistanceGroup = () => {
         let {data: Semanas, error1 } = await supabase.from("report").select("week")
         console.log("Valores de SEA "+JSON.stringify(Semanas))
         setSemanasReportadas(Semanas)
-        //console.log("Estas fueron las semanas reportadas "+JSON.stringify(SemanasReportadas))
+        console.log("Estas fueron las semanas reportadas "+JSON.stringify(SemanasReportadas))
         
       } else {
         Toast.show({
@@ -164,8 +163,17 @@ const AssistanceGroup = () => {
   const resulSemana = weekReport.filter((w) => w.value <= weekNumber);
   console.log("aca es "+JSON.stringify(resulSemana))
 
-  const found1 = resulSemana.find(e => e.value !== SemanasReportadas.week);
-  console.log("valor de f"+JSON.stringify(found1))
+  const SemanasNoreportadas = [];
+  for (var i = 0; i < resulSemana.length; i++) {
+      var igual=false;
+       for (var j = 0; j < SemanasReportadas.length & !igual; j++) {
+           if(resulSemana[i]['value'] == SemanasReportadas[j]['week']) 
+                   igual=true;
+       }
+      if(!igual)SemanasNoreportadas.push(resulSemana[i]);
+  }
+  console.log("Estos son los valores que no se repiten "+JSON.stringify(SemanasNoreportadas));
+
 
 
   async function handleSubmit() {
@@ -173,8 +181,8 @@ const AssistanceGroup = () => {
     const created_by = auth.user.person_id
     const event_id = (event.value)
     group_id = (groups[0].value) 
-    SemanaReportada = parseInt((weekSelect.value))
-    week = SemanaReportada
+    SemanaDeReporte = parseInt((weekSelect.value))
+    week = SemanaDeReporte
     
     offer_amount_usud = offerUSD
     offer_amount_ves =  offerVES
@@ -184,7 +192,7 @@ const AssistanceGroup = () => {
       const valorSemana = (semana)
       console.log("Estos son los valores "+JSON.stringify(valorSemana))
 
-      const found = valorSemana.find(e => e.week === SemanaReportada);
+      const found = valorSemana.find(e => e.week === SemanaDeReporte);
       console.log("Valor de funcion "+JSON.stringify(found))
 
       const Busqueda = valorSemana.includes(found)
@@ -309,7 +317,7 @@ const AssistanceGroup = () => {
 
               <View >
                 <SelectModal
-                  options={resulSemana}
+                  options={SemanasNoreportadas}
                   selected={weekSelect}
                   onApply={(item) => setweekSelect(item)}
                   label="Semana a reportar"
