@@ -14,7 +14,7 @@ import { MemberActions } from '@actions';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { haveChildren } from '@utils';
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { initReactI18next, useTranslation } from 'react-i18next';
 import { FlatList, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { PButtonAddUser } from '../../components';
@@ -80,35 +80,7 @@ export default function PSelectAssignee() {
     members()
   }, [route?.params?.members]);
 
-  
 
-
-  /*useEffect(() => {
-    async function group() {
-        let { data: personGroup, error2 } = await supabase
-        .from('person_group')
-        .select('person_id')
-        .eq('group_id', route?.params?.groupId)
-  
-        if(personGroup.length > 0) {
-          let {data, errors3} = await supabase.from('person').select('id, firstname, lastname, photo')
-            .in(
-              'id',
-              personGroup.map((p) => p.person_id.toString())
-            );
-            if(data && data.length > 0 ) setFriends(data.map((item, index) => ({
-              ...item,
-              isSelect: false
-            })))
-        }
-    }
-    if (route?.params?.groupId) {
-      group()
-    }
-   console.log("este valor 2 "+ JSON.stringify(route?.params))
-   
-  }, [route?.params?.groupId]);
-*/
   const filterCategory = (text) => {
     setKeyword(text);
     if (text) {
@@ -141,6 +113,22 @@ export default function PSelectAssignee() {
     console.log(route?.params?.groupId +"nav "+ JSON.stringify(friends))
               navigation.navigate('AddNewPerson', {group: route?.params?.groupId, members: friends})
   }
+
+  function Busquemos(){
+    const NamePerson = friends.map((e) => {
+      return {value:e.firstname+" "+e.lastname}
+     })
+     for (var i = 0; i <NamePerson.length; i++){
+      const Personas = (NamePerson[i].value);
+      function getInitials(){
+        return `${Personas?.split(" ")[0][0]}${Personas?.split(" ")[1][0]}`;
+      }
+      let initials = getInitials();
+      console.log(initials)
+     }
+
+  }let Valores =Busquemos();
+  console.log(Valores)
 
   return (
     <>
