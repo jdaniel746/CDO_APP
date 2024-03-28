@@ -340,7 +340,7 @@ const AssistanceGroup = () => {
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}>
-                          <ProfileGridSmall image={item.Images} name={item.name} onPress={() => {}} />
+                          <ProfileGridSmall image={item.photo ? item.photo : Images.profile4} name={item.firstname+" "+item.lastname} onPress={() => {}} />
                         </View>
 
                         {index == assistants.length - 1 && (
